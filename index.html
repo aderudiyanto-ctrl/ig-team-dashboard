@@ -109,7 +109,7 @@
       <div class="kpis" id="kpis"></div>
     </section>
     <section class="charts">
-      <div class="panel"><h3>Followers gained per day</h3><canvas id="growthChart"></canvas></div>
+      <div class="panel"><h3>Followers gained per day</h3><canvas id="growthChart"></canvas><div class="footnote" style="margin-top:8px">Instagram only shares daily follower changes for ~the last 30 days, so this chart and the "this period" follower number cover at most the most recent 30 days. All other metrics use your selected range in full.</div></div>
       <div class="panel"><h3>2 · Content Mix</h3><canvas id="mixChart"></canvas><div class="mixlegend" id="mixLegend"></div></div>
     </section>
     <section>
@@ -194,7 +194,7 @@ async function load(){
   try{
     const [mediaAll,followAll,totalRow]=await Promise.all([
       call({connector:"instagram",fields:MEDIA_FIELDS,date_preset:preset}),
-      call({connector:"instagram",fields:["date","follower_count_1d"],date_preset:preset}),
+      call({connector:"instagram",fields:["date","follower_count_1d"],date_preset:"last_30dT"}),
       call({connector:"instagram",fields:["date","followers_count"],date_preset:"last_2dT"})
     ]);
     const media=mediaAll.filter(m=>{const d=(m.timestamp||'').slice(0,10);return d>=from&&d<=to;});
