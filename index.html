@@ -99,6 +99,7 @@
     <button class="btn" id="refresh" style="background:#5e7d5e">↻ Refresh</button>
     <span class="rangelabel" id="rangelabel"></span>
   </div>
+  <div style="font-size:12px;color:#6f6155;margin:-12px 0 20px 4px;">Tip: tap <b>7d / 30d / 90d</b> for quick ranges, or set the <b>From</b> &amp; <b>To</b> dates and press <b>Apply</b>. Press <b>↻ Refresh</b> for the latest numbers. The active period is shown on the right.</div>
 
   <div id="loading"><div class="spinner"></div>Pulling live Instagram data…</div>
   <div id="error" style="display:none"></div>
@@ -134,17 +135,27 @@
 <script>
 // ---- data layer: talks to our own /api/data proxy (Windsor key stays server-side) ----
 const MEDIA_FIELDS=["timestamp","media_id","media_type","media_product_type","media_caption","media_permalink","media_views","media_reach","media_saved","media_shares","media_like_count","media_comments_count"];
-async function call(params){
+async function call(params, attempt){
+  attempt=attempt||0;
   const qs=new URLSearchParams();
   qs.set('connector', params.connector||'instagram');
   qs.set('fields',(params.fields||[]).join(','));
-  if(params.date_from) qs.set('date_from',params.date_from);
-  if(params.date_to) qs.set('date_to',params.date_to);
   if(params.date_preset) qs.set('date_preset',params.date_preset);
-  const r=await fetch('/api/data?'+qs.toString());
-  const j=await r.json();
-  if(j.error) throw new Error(j.error);
-  return Array.isArray(j.result)?j.result:[];
+  try{
+    const ctrl=new AbortController();
+    const timer=setTimeout(()=>ctrl.abort(), 45000);
+    const r=await fetch('/api/data?'+qs.toString(),{signal:ctrl.signal});
+    clearTimeout(timer);
+    const txt=await r.text();
+    let j;
+    try{ j=JSON.parse(txt); }
+    catch(e){ throw new Error('busy'); }
+    if(j.error) throw new Error(j.error);
+    return Array.isArray(j.result)?j.result:[];
+  }catch(e){
+    if(attempt<2){ await new Promise(r=>setTimeout(r,1500)); return call(params, attempt+1); }
+    throw e;
+  }
 }
 
 function fmt(n){n=+n||0;if(n>=1e6)return(n/1e6).toFixed(2).replace(/\.?0+$/,'')+'M';if(n>=1e3)return(n/1e3).toFixed(1).replace(/\.0$/,'')+'K';return Math.round(n).toLocaleString();}
@@ -164,18 +175,31 @@ document.getElementById('refresh').addEventListener('click',()=>load());
 
 let growthC=null,mixC=null,gridInst=null;
 
+function fmtNice(d){ const p=d.split('-'); const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][(+p[1])-1]; return (+p[2])+' '+mo+' '+p[0]; }
+function daysBetween(from,to){ return Math.round((new Date(to+'T00:00:00')-new Date(from+'T00:00:00'))/86400000)+1; }
+// Windsor's media feed is reliable with built-in presets but flaky with exact from/to,
+// so we fetch the smallest preset window that covers the range, then filter to the exact dates locally.
+function coverPreset(from){
+  const sinceFrom = Math.ceil((Date.now()-new Date(from+'T00:00:00'))/86400000)+2;
+  for(const p of [7,30,90,180,365,730]) if(sinceFrom<=p) return 'last_'+p+'dT';
+  return 'last_730dT';
+}
 async function load(){
   const from=fromEl.value,to=toEl.value;
   document.getElementById('loading').style.display='block';
   document.getElementById('dash').style.display='none';
   document.getElementById('error').style.display='none';
-  document.getElementById('rangelabel').textContent=`${from} → ${to}`;
+  document.getElementById('rangelabel').innerHTML=`📅 Showing <b>${fmtNice(from)} – ${fmtNice(to)}</b> · ${daysBetween(from,to)} days`;
+  const preset=coverPreset(from);
   try{
-    const [media,follow,totalRow]=await Promise.all([
-      call({connector:"instagram",fields:MEDIA_FIELDS,date_from:from,date_to:to}),
-      call({connector:"instagram",fields:["date","follower_count_1d"],date_from:from,date_to:to}),
+    const [mediaAll,followAll,totalRow]=await Promise.all([
+      call({connector:"instagram",fields:MEDIA_FIELDS,date_preset:preset}),
+      call({connector:"instagram",fields:["date","follower_count_1d"],date_preset:preset}),
       call({connector:"instagram",fields:["date","followers_count"],date_preset:"last_2dT"})
     ]);
+    const media=mediaAll.filter(m=>{const d=(m.timestamp||'').slice(0,10);return d>=from&&d<=to;});
+    const follow=followAll.filter(r=>{const d=(r.date||'').slice(0,10);return d>=from&&d<=to;})
+                          .sort((a,b)=>a.date<b.date?-1:1);
     render(media,follow,totalRow,from,to);
     document.getElementById('loading').style.display='none';
     document.getElementById('dash').style.display='block';
@@ -183,7 +207,7 @@ async function load(){
   }catch(e){
     document.getElementById('loading').style.display='none';
     const el=document.getElementById('error');el.style.display='block';
-    el.innerHTML='⚠️ Could not load data: '+(e&&e.message?e.message:e)+'<br><br>Check that WINDSOR_API_KEY is set correctly in Vercel.';
+    el.innerHTML='⚠️ Could not load data right now. Please press ↻ Refresh. <br><br>If it keeps happening, the data source may be busy — try again in a minute.';
   }
 }
 
