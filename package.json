@@ -1,0 +1,7 @@
+{
+  "name": "ig-dashboard-adeftryani",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Live Instagram performance dashboard for @adeftryani — static frontend + Windsor.ai data proxy."
+}
