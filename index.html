@@ -192,11 +192,16 @@ async function load(){
   document.getElementById('rangelabel').innerHTML=`📅 Showing <b>${fmtNice(from)} – ${fmtNice(to)}</b> · ${daysBetween(from,to)} days`;
   const preset=coverPreset(from);
   try{
-    const [mediaAll,followAll,totalRow]=await Promise.all([
-      call({connector:"instagram",fields:MEDIA_FIELDS,date_preset:preset}),
+    // Split into two fast queries (post info + metrics) and merge — the combined
+    // 12-field join is slow over wide ranges, but each half returns instantly.
+    const [mMeta,mMetrics,followAll,totalRow]=await Promise.all([
+      call({connector:"instagram",fields:["media_id","timestamp","media_type","media_product_type","media_caption","media_permalink"],date_preset:preset}),
+      call({connector:"instagram",fields:["media_id","media_views","media_reach","media_saved","media_shares","media_like_count","media_comments_count"],date_preset:preset}),
       call({connector:"instagram",fields:["date","follower_count_1d"],date_preset:"last_30dT"}),
       call({connector:"instagram",fields:["date","followers_count"],date_preset:"last_2dT"})
     ]);
+    const metricsById={}; mMetrics.forEach(r=>{ if(r&&r.media_id!=null) metricsById[r.media_id]=r; });
+    const mediaAll=mMeta.map(r=>Object.assign({},r,metricsById[r.media_id]||{}));
     const media=mediaAll.filter(m=>{const d=(m.timestamp||'').slice(0,10);return d>=from&&d<=to;});
     const follow=followAll.filter(r=>{const d=(r.date||'').slice(0,10);return d>=from&&d<=to;})
                           .sort((a,b)=>a.date<b.date?-1:1);
