@@ -7,7 +7,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
 :root{
-  --bg:#FBF5E9; --bg2:#F4EAD6; --card:#FFFFFF; --cardsoft:#FFFCF4;
+  --bg:#FBF5E9; --card:#FFFFFF; --cardsoft:#FFFCF4;
   --ink:#4A3B2E; --ink2:#7A6A58; --line:#EADFC9;
   --terra:#C0623C; --terra-d:#A24E2E; --olive:#6E7A4A; --clay:#D49A5C;
   --sand:#E8CFA3; --gold:#C9962F; --teal:#5E8C7B; --rose:#B66A5A;
@@ -46,7 +46,6 @@ h2.sec::before{content:"";width:26px;height:4px;border-radius:3px;background:var
 .mixrow{display:flex;align-items:center;gap:10px;font-size:14px}
 .dot{width:14px;height:14px;border-radius:4px;flex:none}
 .mixrow b{margin-left:auto;font-size:16px}
-/* top5 */
 .top5{display:grid;gap:14px}
 .tcard{display:grid;grid-template-columns:42px 1fr;gap:14px;background:var(--cardsoft);
   border:1px solid var(--line);border-left:6px solid var(--terra);border-radius:14px;padding:16px 18px}
@@ -60,7 +59,6 @@ h2.sec::before{content:"";width:26px;height:4px;border-radius:3px;background:var
 .why b{color:var(--terra-d)}
 a.link{color:var(--terra-d);font-weight:600;text-decoration:none;font-size:13px}
 a.link:hover{text-decoration:underline}
-/* insights */
 .ins{grid-template-columns:1fr 1fr}
 @media(max-width:820px){.ins{grid-template-columns:1fr}}
 .icard{border-radius:14px;padding:16px 18px;border:1px solid var(--line)}
@@ -72,7 +70,6 @@ a.link:hover{text-decoration:underline}
 .work .tag{color:var(--olive)}.nowork .tag{color:var(--rose)}
 .recipe{background:#FFF;border:1px solid var(--line);border-radius:8px;padding:8px 11px;margin-top:8px;font-size:12.5px;color:var(--ink)}
 .recipe b{color:var(--terra-d)}
-/* table */
 .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:#FFF}
 table{border-collapse:collapse;width:100%;min-width:880px;font-size:13px}
 th{background:#6E7A4A;color:#F7F3E6;font-weight:700;text-align:right;padding:11px 12px;position:sticky;top:0;font-size:12px;letter-spacing:.3px}
@@ -95,218 +92,163 @@ footer b{color:var(--terra-d)}
     <div class="brand">@gowork · Instagram Report
       <small>GoWork Coworking Office Space · lets.gowork</small>
     </div>
-    <div class="period">
-      Reporting period<br><b>9 May – 8 Jun 2026</b> · last 30 days<br>
-      <span style="opacity:.85">Post analysis: 16 most recent posts</span>
-    </div>
+    <div class="period" id="periodBox"></div>
   </div>
 </header>
-
 <div class="wrap">
-
-  <!-- ACCOUNT OVERVIEW -->
   <h2 class="sec">Account Overview</h2>
-  <div class="grid kpis">
-    <div class="card kpi">
-      <div class="lbl">Total Followers</div>
-      <div class="val">35,093</div>
-      <div class="sub"><span class="up">▲ +499</span> vs 30 days ago (+1.44%)</div>
-      <div class="accentbar" style="background:linear-gradient(90deg,#C0623C,#D49A5C)"></div>
-    </div>
-    <div class="card kpi">
-      <div class="lbl">Net Follower Growth (30d)</div>
-      <div class="val">+499</div>
-      <div class="sub">from 34,594 → 35,093</div>
-      <div class="accentbar" style="background:linear-gradient(90deg,#6E7A4A,#9FB36A)"></div>
-    </div>
-    <div class="card kpi">
-      <div class="lbl">Accounts Reached (16 posts)</div>
-      <div class="val">21,636</div>
-      <div class="sub">unique reach across the set</div>
-      <div class="accentbar" style="background:linear-gradient(90deg,#5E8C7B,#8FB7A8)"></div>
-    </div>
-    <div class="card kpi">
-      <div class="lbl">Posts Published</div>
-      <div class="val">16</div>
-      <div class="sub">11 Reels · 5 Carousels · 0 Static</div>
-      <div class="accentbar" style="background:linear-gradient(90deg,#C9962F,#E8CFA3)"></div>
-    </div>
-  </div>
-
-  <!-- CONTENT PERFORMANCE -->
+  <div class="grid kpis" id="overview"></div>
   <h2 class="sec">Content Performance · 16 Most Recent Posts</h2>
-  <div class="grid kpis">
-    <div class="card kpi"><div class="lbl">Total Views</div><div class="val">33,416</div><div class="sub">all content played/displayed</div><div class="accentbar" style="background:#C0623C"></div></div>
-    <div class="card kpi"><div class="lbl">Total Video Views</div><div class="val">27,360</div><div class="sub">from 11 Reels (82% of views)</div><div class="accentbar" style="background:#A24E2E"></div></div>
-    <div class="card kpi"><div class="lbl">Total Engagement</div><div class="val">708</div><div class="sub">likes + comments + saves + shares</div><div class="accentbar" style="background:#6E7A4A"></div></div>
-    <div class="card kpi"><div class="lbl">Average Views / Post</div><div class="val">2,088</div><div class="sub">median is far lower (~1,090)</div><div class="accentbar" style="background:#5E8C7B"></div></div>
-    <div class="card kpi"><div class="lbl">Avg Engagement Rate</div><div class="val">3.34%</div><div class="sub">engagement ÷ reach, per post</div><div class="accentbar" style="background:#C9962F"></div></div>
-  </div>
-
-  <!-- engagement breakdown small cards -->
-  <div class="grid kpis" style="margin-top:16px">
-    <div class="card kpi"><div class="lbl">Likes</div><div class="val" style="font-size:24px">459</div></div>
-    <div class="card kpi"><div class="lbl">Comments</div><div class="val" style="font-size:24px">28</div></div>
-    <div class="card kpi"><div class="lbl">Saves</div><div class="val" style="font-size:24px">40</div></div>
-    <div class="card kpi"><div class="lbl">Shares</div><div class="val" style="font-size:24px">166</div><div class="sub">your #1 growth lever</div></div>
-  </div>
-
-  <!-- CHARTS -->
+  <div class="grid kpis" id="perf"></div>
+  <div class="grid kpis" id="engbreak" style="margin-top:16px"></div>
   <h2 class="sec">Views Per Post &amp; Content Mix</h2>
   <div class="grid three">
     <div class="card"><div class="chartbox"><canvas id="viewsChart"></canvas></div></div>
     <div class="card">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;height:100%">
         <div class="chartbox sm" style="height:230px"><canvas id="mixChart"></canvas></div>
-        <div class="mixlegend">
-          <div class="mixrow"><span class="dot" style="background:#C0623C"></span>Reels (Video) <b>11</b></div>
-          <div class="mixrow"><span class="dot" style="background:#6E7A4A"></span>Carousel <b>5</b></div>
-          <div class="mixrow"><span class="dot" style="background:#C9962F"></span>Single Post <b>0</b></div>
-          <div class="mixrow"><span class="dot" style="background:#5E8C7B"></span>Story <b>0</b></div>
-          <div style="font-size:12px;color:var(--ink2);margin-top:6px">69% of your output is Reels — and Reels drive 82% of views.</div>
-        </div>
+        <div class="mixlegend" id="mixLegend"></div>
       </div>
     </div>
   </div>
-
-  <!-- TOP 5 -->
   <h2 class="sec">Top 5 Content — Why They Won</h2>
   <div class="top5" id="top5"></div>
-
-  <!-- WHATS WORKING -->
   <h2 class="sec">What's Working — Reverse-Engineer These</h2>
   <div class="grid ins" id="working"></div>
-
-  <!-- WHATS NOT WORKING -->
   <h2 class="sec">What's NOT Working — Stop Doing These</h2>
   <div class="grid ins" id="notworking"></div>
-
-  <!-- DETAIL TABLE -->
   <h2 class="sec">Full Detail — All 16 Posts</h2>
-  <div class="tablewrap">
-    <table id="detail">
-      <thead><tr>
-        <th class="l">#</th><th class="l">Date</th><th class="l">Type</th><th>Views</th><th>Reach</th>
-        <th>Likes</th><th>Cmts</th><th>Saves</th><th>Shares</th><th>Eng</th><th>ER%</th>
-        <th class="l">Link</th><th class="l">Highlight — why it worked / didn't</th>
-      </tr></thead>
-      <tbody></tbody>
-    </table>
-  </div>
-
+  <div class="tablewrap"><table id="detail"><thead><tr>
+    <th class="l">#</th><th class="l">Date</th><th class="l">Type</th><th>Views</th><th>Reach</th>
+    <th>Likes</th><th>Cmts</th><th>Saves</th><th>Shares</th><th>Eng</th><th>ER%</th>
+    <th class="l">Link</th><th class="l">Highlight — why it worked / didn't</th>
+  </tr></thead><tbody></tbody></table></div>
   <footer>
-    <b>Auto-update:</b> this dashboard is regenerated every morning at 8:00 AM from your live Windsor.ai → Instagram data, then redeployed to this URL. You'll get a notification in Claude each time it refreshes.<br>
-    <span class="updated">Data source: Windsor.ai (Instagram connector) · Generated 8 Jun 2026 · Engagement rate = (likes+comments+saves+shares) ÷ reach.</span>
+    <b>Auto-update:</b> regenerated every morning at 8:00 AM from live Windsor.ai → Instagram data, then redeployed here. You get a notification in Claude on each refresh.<br>
+    <span class="updated" id="footnote"></span>
   </footer>
 </div>
-
 <script>
-const posts=[
- {ts:"2026-06-08",type:"REELS",url:"https://www.instagram.com/reel/DZUWQI6ROJc/",views:1589,reach:1048,likes:25,comments:0,saves:5,shares:16,eng:46},
- {ts:"2026-06-08",type:"REELS",url:"https://www.instagram.com/reel/DZT8F03x1sQ/",views:481,reach:326,likes:13,comments:2,saves:2,shares:0,eng:20},
- {ts:"2026-06-05",type:"REELS",url:"https://www.instagram.com/reel/DZMyGV5NPeu/",views:7240,reach:4980,likes:106,comments:2,saves:10,shares:95,eng:215},
- {ts:"2026-06-05",type:"REELS",url:"https://www.instagram.com/reel/DZMKSr4ysb2/",views:669,reach:521,likes:3,comments:0,saves:0,shares:1,eng:4},
- {ts:"2026-06-04",type:"CAROUSEL_ALBUM",url:"https://www.instagram.com/p/DZKQkWwmD9l/",views:920,reach:430,likes:13,comments:0,saves:4,shares:5,eng:22},
- {ts:"2026-06-04",type:"CAROUSEL_ALBUM",url:"https://www.instagram.com/p/DZJ_sQ0Eczt/",views:772,reach:319,likes:11,comments:0,saves:4,shares:1,eng:16},
- {ts:"2026-06-03",type:"REELS",url:"https://www.instagram.com/reel/DZHcOhrxZKV/",views:1447,reach:1053,likes:19,comments:0,saves:0,shares:1,eng:21},
- {ts:"2026-06-03",type:"CAROUSEL_ALBUM",url:"https://www.instagram.com/p/DZHAw-XEVKK/",views:731,reach:379,likes:5,comments:0,saves:2,shares:0,eng:7},
- {ts:"2026-06-03",type:"CAROUSEL_ALBUM",url:"https://www.instagram.com/p/DZGsIiCGEqf/",views:1033,reach:502,likes:12,comments:0,saves:0,shares:0,eng:13},
- {ts:"2026-06-02",type:"REELS",url:"https://www.instagram.com/reel/DZE3X2CRYIK/",views:1094,reach:841,likes:14,comments:0,saves:3,shares:1,eng:19},
- {ts:"2026-05-29",type:"REELS",url:"https://www.instagram.com/reel/DY6Vw1LxTNd/",views:5113,reach:3050,likes:31,comments:0,saves:1,shares:8,eng:40},
- {ts:"2026-05-26",type:"REELS",url:"https://www.instagram.com/reel/DYzJRpXP2Hl/",views:2696,reach:1887,likes:60,comments:5,saves:1,shares:3,eng:72},
- {ts:"2026-05-25",type:"REELS",url:"https://www.instagram.com/reel/DYv4-v8RRUM/",views:966,reach:734,likes:10,comments:7,saves:2,shares:1,eng:20},
- {ts:"2026-05-22",type:"REELS",url:"https://www.instagram.com/reel/DYoimEaRMpC/",views:4144,reach:3187,likes:82,comments:0,saves:5,shares:6,eng:97},
- {ts:"2026-05-21",type:"CAROUSEL_ALBUM",url:"https://www.instagram.com/p/DYl95rVgNai/",views:2600,reach:1134,likes:41,comments:4,saves:1,shares:20,eng:66},
- {ts:"2026-05-21",type:"REELS",url:"https://www.instagram.com/reel/DYllmWRx6Uz/",views:1921,reach:1245,likes:14,comments:8,saves:0,shares:8,eng:30},
-];
-const AVG=2088;
-const tlabel=t=>({REELS:"Reel",CAROUSEL_ALBUM:"Carousel",IMAGE:"Image"})[t];
+const posts=[{"ts": "2026-06-08", "type": "REELS", "url": "https://www.instagram.com/reel/DZUWQI6ROJc/", "views": 1589, "reach": 1048, "likes": 25, "comments": 0, "saves": 5, "shares": 16, "eng": 46}, {"ts": "2026-06-08", "type": "REELS", "url": "https://www.instagram.com/reel/DZT8F03x1sQ/", "views": 481, "reach": 326, "likes": 13, "comments": 2, "saves": 2, "shares": 0, "eng": 20}, {"ts": "2026-06-05", "type": "REELS", "url": "https://www.instagram.com/reel/DZMyGV5NPeu/", "views": 7240, "reach": 4980, "likes": 106, "comments": 2, "saves": 10, "shares": 95, "eng": 215}, {"ts": "2026-06-05", "type": "REELS", "url": "https://www.instagram.com/reel/DZMKSr4ysb2/", "views": 669, "reach": 521, "likes": 3, "comments": 0, "saves": 0, "shares": 1, "eng": 4}, {"ts": "2026-06-04", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DZKQkWwmD9l/", "views": 920, "reach": 430, "likes": 13, "comments": 0, "saves": 4, "shares": 5, "eng": 22}, {"ts": "2026-06-04", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DZJ_sQ0Eczt/", "views": 772, "reach": 319, "likes": 11, "comments": 0, "saves": 4, "shares": 1, "eng": 16}, {"ts": "2026-06-03", "type": "REELS", "url": "https://www.instagram.com/reel/DZHcOhrxZKV/", "views": 1447, "reach": 1053, "likes": 19, "comments": 0, "saves": 0, "shares": 1, "eng": 21}, {"ts": "2026-06-03", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DZHAw-XEVKK/", "views": 731, "reach": 379, "likes": 5, "comments": 0, "saves": 2, "shares": 0, "eng": 7}, {"ts": "2026-06-03", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DZGsIiCGEqf/", "views": 1033, "reach": 502, "likes": 12, "comments": 0, "saves": 0, "shares": 0, "eng": 13}, {"ts": "2026-06-02", "type": "REELS", "url": "https://www.instagram.com/reel/DZE3X2CRYIK/", "views": 1094, "reach": 841, "likes": 14, "comments": 0, "saves": 3, "shares": 1, "eng": 19}, {"ts": "2026-05-29", "type": "REELS", "url": "https://www.instagram.com/reel/DY6Vw1LxTNd/", "views": 5113, "reach": 3050, "likes": 31, "comments": 0, "saves": 1, "shares": 8, "eng": 40}, {"ts": "2026-05-26", "type": "REELS", "url": "https://www.instagram.com/reel/DYzJRpXP2Hl/", "views": 2696, "reach": 1887, "likes": 60, "comments": 5, "saves": 1, "shares": 3, "eng": 72}, {"ts": "2026-05-25", "type": "REELS", "url": "https://www.instagram.com/reel/DYv4-v8RRUM/", "views": 966, "reach": 734, "likes": 10, "comments": 7, "saves": 2, "shares": 1, "eng": 20}, {"ts": "2026-05-22", "type": "REELS", "url": "https://www.instagram.com/reel/DYoimEaRMpC/", "views": 4144, "reach": 3187, "likes": 82, "comments": 0, "saves": 5, "shares": 6, "eng": 97}, {"ts": "2026-05-21", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DYl95rVgNai/", "views": 2600, "reach": 1134, "likes": 41, "comments": 4, "saves": 1, "shares": 20, "eng": 66}, {"ts": "2026-05-21", "type": "REELS", "url": "https://www.instagram.com/reel/DYllmWRx6Uz/", "views": 1921, "reach": 1245, "likes": 14, "comments": 8, "saves": 0, "shares": 8, "eng": 30}];
+const meta={"totalFollowers": 35093, "growth30d": 499, "prev": 34594, "periodStart": "9 May", "periodEnd": "8 Jun 2026", "generated": "8 Jun 2026"};
+const n=posts.length;
+posts.forEach(p=>p.er=p.eng/p.reach*100);
+const sum=(f)=>posts.reduce((a,p)=>a+f(p),0);
+const fmt=(x)=>x.toLocaleString();
+const totalViews=sum(p=>p.views), videoViews=sum(p=>p.type=="REELS"?p.views:0);
+const totalEng=sum(p=>p.eng), totalReach=sum(p=>p.reach);
+const likes=sum(p=>p.likes),comments=sum(p=>p.comments),saves=sum(p=>p.saves),shares=sum(p=>p.shares);
+const avgViews=Math.round(totalViews/n);
+const avgER=(posts.reduce((a,p)=>a+p.er,0)/n);
+const reels=posts.filter(p=>p.type=="REELS").length;
+const carousel=posts.filter(p=>p.type=="CAROUSEL_ALBUM").length;
+const image=posts.filter(p=>p.type=="IMAGE").length;
+const story=posts.filter(p=>p.type=="STORY").length;
+const growthPct=(meta.growth30d/meta.prev*100).toFixed(2);
+const vidPct=Math.round(videoViews/totalViews*100);
+const sortedV=[...posts].sort((a,b)=>b.views-a.views);
+const median=(()=>{const v=[...posts].map(p=>p.views).sort((a,b)=>a-b);return Math.round((v[7]+v[8])/2);})();
+
+document.getElementById('periodBox').innerHTML=
+ `Reporting period<br><b>${meta.periodStart} – ${meta.periodEnd}</b> · last 30 days<br><span style="opacity:.85">Post analysis: 16 most recent posts</span>`;
+
+const kpi=(lbl,val,sub,bar)=>`<div class="card kpi"><div class="lbl">${lbl}</div><div class="val">${val}</div>${sub?`<div class="sub">${sub}</div>`:''}${bar?`<div class="accentbar" style="background:${bar}"></div>`:''}</div>`;
+document.getElementById('overview').innerHTML=
+ kpi('Total Followers',fmt(meta.totalFollowers),`<span class="up">▲ +${fmt(meta.growth30d)}</span> vs 30 days ago (+${growthPct}%)`,'linear-gradient(90deg,#C0623C,#D49A5C)')+
+ kpi('Net Follower Growth (30d)','+'+fmt(meta.growth30d),`from ${fmt(meta.prev)} → ${fmt(meta.totalFollowers)}`,'linear-gradient(90deg,#6E7A4A,#9FB36A)')+
+ kpi('Accounts Reached (16 posts)',fmt(totalReach),'unique reach across the set','linear-gradient(90deg,#5E8C7B,#8FB7A8)')+
+ kpi('Posts Published',n,`${reels} Reels · ${carousel} Carousels · ${image} Static`,'linear-gradient(90deg,#C9962F,#E8CFA3)');
+document.getElementById('perf').innerHTML=
+ kpi('Total Views',fmt(totalViews),'all content played/displayed','#C0623C')+
+ kpi('Total Video Views',fmt(videoViews),`from ${reels} Reels (${vidPct}% of views)`,'#A24E2E')+
+ kpi('Total Engagement',fmt(totalEng),'likes + comments + saves + shares','#6E7A4A')+
+ kpi('Average Views / Post',fmt(avgViews),`median is far lower (~${fmt(median)})`,'#5E8C7B')+
+ kpi('Avg Engagement Rate',avgER.toFixed(2)+'%','engagement ÷ reach, per post','#C9962F');
+document.getElementById('engbreak').innerHTML=
+ kpi('Likes',fmt(likes),'','')+kpi('Comments',fmt(comments),'','')+kpi('Saves',fmt(saves),'','')+
+ kpi('Shares',fmt(shares),'your #1 growth lever','');
+
 const badge=t=>t=="REELS"?'<span class="badge b-reel">Reel</span>':t=="CAROUSEL_ALBUM"?'<span class="badge b-car">Carousel</span>':'<span class="badge b-img">Image</span>';
-posts.forEach(p=>p.er=(p.eng/p.reach*100));
-
-// ---- Views chart ----
-const sorted=[...posts].sort((a,b)=>b.views-a.views);
-new Chart(document.getElementById('viewsChart'),{
- type:'bar',
- data:{labels:sorted.map(p=>p.url.split('/').filter(Boolean).pop().slice(0,6)),
-  datasets:[{label:'Views',data:sorted.map(p=>p.views),
-   backgroundColor:sorted.map(p=>p.type=="REELS"?'#C0623C':p.type=="CAROUSEL_ALBUM"?'#6E7A4A':'#C9962F'),
-   borderRadius:6}]},
+new Chart(document.getElementById('viewsChart'),{type:'bar',
+ data:{labels:sortedV.map(p=>p.url.split('/').filter(Boolean).pop().slice(0,6)),
+  datasets:[{label:'Views',data:sortedV.map(p=>p.views),
+   backgroundColor:sortedV.map(p=>p.type=="REELS"?'#C0623C':p.type=="CAROUSEL_ALBUM"?'#6E7A4A':'#C9962F'),borderRadius:6}]},
  options:{plugins:{legend:{display:false},title:{display:true,text:'Views per post (Reels = terracotta, Carousel = olive)',color:'#7A6A58',font:{size:12}}},
-  scales:{y:{ticks:{color:'#7A6A58'},grid:{color:'#EFE6D4'}},x:{ticks:{color:'#9A8A78',font:{size:9}},grid:{display:false}}}}
-});
-// ---- Mix donut ----
-new Chart(document.getElementById('mixChart'),{
- type:'doughnut',
- data:{labels:['Reels','Carousel','Single','Story'],
-  datasets:[{data:[11,5,0,0],backgroundColor:['#C0623C','#6E7A4A','#C9962F','#5E8C7B'],borderWidth:2,borderColor:'#FFF'}]},
- options:{cutout:'62%',plugins:{legend:{display:false}}}
-});
+  scales:{y:{ticks:{color:'#7A6A58'},grid:{color:'#EFE6D4'}},x:{ticks:{color:'#9A8A78',font:{size:9}},grid:{display:false}}}}});
+new Chart(document.getElementById('mixChart'),{type:'doughnut',
+ data:{labels:['Reels','Carousel','Single','Story'],datasets:[{data:[reels,carousel,image,story],
+  backgroundColor:['#C0623C','#6E7A4A','#C9962F','#5E8C7B'],borderWidth:2,borderColor:'#FFF'}]},
+ options:{cutout:'62%',plugins:{legend:{display:false}}}});
+const reelsShareOfViews=Math.round(videoViews/totalViews*100);
+document.getElementById('mixLegend').innerHTML=
+ `<div class="mixrow"><span class="dot" style="background:#C0623C"></span>Reels (Video) <b>${reels}</b></div>
+  <div class="mixrow"><span class="dot" style="background:#6E7A4A"></span>Carousel <b>${carousel}</b></div>
+  <div class="mixrow"><span class="dot" style="background:#C9962F"></span>Single Post <b>${image}</b></div>
+  <div class="mixrow"><span class="dot" style="background:#5E8C7B"></span>Story <b>${story}</b></div>
+  <div style="font-size:12px;color:var(--ink2);margin-top:6px">${Math.round(reels/n*100)}% of your output is Reels — and Reels drive ${reelsShareOfViews}% of views.</div>`;
 
-// ---- Top 5 ----
-const top5=[...posts].sort((a,b)=>b.views-a.views).slice(0,5);
-const whyTop=[
- "<b>Runaway winner.</b> 7,240 views on 4,980 reach with <b>95 shares</b> — shares are 44% of all engagement on this post. On Instagram, shares are the single strongest signal pushing a Reel into non-follower feeds, which is exactly why reach is 5× your typical post. Saves (10) and a strong like count (106) confirm the content was both useful and entertaining. This is your template: a Reel people feel compelled to send to a friend.",
- "<b>Reach machine.</b> 5,113 views, 3,050 reach — the second-widest spread in the set. Engagement rate is modest (1.3%) which tells us the algorithm pushed it on watch-through/retention rather than likes. A strong hook + tight edit kept people watching, so IG kept serving it. Replicate the pacing, not necessarily the topic.",
- "<b>High-affinity Reel.</b> 4,144 views, 3,187 reach and a clean 82 likes with zero reliance on shares. Broad reach + high like-rate means the topic resonated with your core coworking/office audience. Strong evergreen performer.",
- "<b>Best engagement quality.</b> 2,696 views but a <b>3.8% engagement rate</b> — well above your 3.34% average — plus 5 comments. Smaller reach, but the people who saw it acted. Great signal the message/CTA landed; worth boosting or reposting.",
- "<b>Carousel breakout.</b> 2,600 views with <b>20 shares</b> — proof your audience will share a carousel when it's genuinely save/share-worthy (tips, checklist, or list format). Your only non-Reel in the top 5, and it earned it on shareability."
-];
+// data-driven top5 narrative
+function whyTop(p,rank){
+  const parts=[];
+  const shareRatio=p.eng?Math.round(p.shares/p.eng*100):0;
+  if(rank===0) parts.push(`<b>Runaway winner</b> of the period.`);
+  else if(p.reach>=2500) parts.push(`<b>Wide-reach performer.</b>`);
+  else if(p.er>=4) parts.push(`<b>High-quality engagement.</b>`);
+  else parts.push(`<b>Strong performer.</b>`);
+  parts.push(`${fmt(p.views)} views on ${fmt(p.reach)} reach.`);
+  if(p.shares>=15) parts.push(`<b>${p.shares} shares</b> (${shareRatio}% of its engagement) — shares are the #1 signal pushing ${p.type=="REELS"?"a Reel":"a post"} into non-follower feeds, which is why reach is well above your baseline. Replicate the share trigger.`);
+  else if(p.er>=3.6) parts.push(`Engagement rate of <b>${p.er.toFixed(1)}%</b> beats your average — the people who saw it acted. The message/CTA landed.`);
+  else parts.push(`The algorithm pushed it on watch-through/retention rather than likes — a strong hook + tight edit kept people watching. Replicate the pacing.`);
+  if(p.saves>=8) parts.push(`High saves (${p.saves}) confirm it was reference-worthy.`);
+  if(p.type=="CAROUSEL_ALBUM") parts.push(`Notably your top non-Reel — proof a list/value carousel can travel.`);
+  return parts.join(' ');
+}
+const top5=sortedV.slice(0,5);
 document.getElementById('top5').innerHTML=top5.map((p,i)=>`
  <div class="tcard"><div class="rank">${i+1}</div><div>
    ${badge(p.type)} <a class="link" href="${p.url}" target="_blank">${p.url.replace('https://www.','')}</a>
    <div class="tmeta">
-     <span>Views <b>${p.views.toLocaleString()}</b></span>
-     <span>Reach <b>${p.reach.toLocaleString()}</b></span>
-     <span>Likes <b>${p.likes}</b></span>
-     <span>Comments <b>${p.comments}</b></span>
-     <span>Saves <b>${p.saves}</b></span>
-     <span>Shares <b>${p.shares}</b></span>
+     <span>Views <b>${fmt(p.views)}</b></span><span>Reach <b>${fmt(p.reach)}</b></span>
+     <span>Likes <b>${p.likes}</b></span><span>Comments <b>${p.comments}</b></span>
+     <span>Saves <b>${p.saves}</b></span><span>Shares <b>${p.shares}</b></span>
      <span>ER <b>${p.er.toFixed(1)}%</b></span>
-   </div>
-   <div class="why">${whyTop[i]}</div>
+   </div><div class="why">${whyTop(p,i)}</div>
  </div></div>`).join('');
 
-// ---- Working / Not working ----
 const working=[
- {t:"Shares are your growth engine",h:"Your top post earned 95 shares and reached 5,000 accounts; the #5 carousel got 20 shares. Across all 16 posts, the 4 with the most shares took the most reach. Shares > likes for distribution.",r:"Recipe: end every Reel with a reason to send it — 'tag a coworker who needs this', a relatable office moment, or a save-worthy tip. Engineer the share, don't hope for it."},
- {t:"Reels carry the account",h:"11 Reels generated 27,360 of 33,416 total views (82%). Every post above 2,500 views except one was a Reel. Static/feed content barely moves.",r:"Recipe: keep Reels at ~70%+ of output. Lead with motion in the first frame; static photos are for filler days only."},
- {t:"A strong hook beats a big follower count",h:"Reach ranged from 319 to 4,980 on the SAME audience. The difference is the first 3 seconds. Your winners reached 5× more people than your average — that gap is hook quality, not luck.",r:"Recipe: open with a bold visual or a curiosity line ('POV: your office on a Monday…'). Film 3 hook variants, keep the one with best 3-sec retention."},
- {t:"Relatable office/coworking humor travels",h:"Your highest-engagement Reels lean on workplace-relatable moments — that's why people share and comment. The audience self-identifies and tags peers.",r:"Recipe: turn everyday coworking pain points (meetings, deadlines, AC wars, coffee) into 7–12s skits. Familiar > polished."},
- {t:"Carousels can win when they're list-shaped",h:"Your one breakout carousel (2,600 views, 20 shares) was share-worthy because it packaged value. Most other carousels under-performed because they read as announcements, not value.",r:"Recipe: build carousels as '5 things / checklist / before-after' with a strong slide-1 title and a 'save this' final slide."},
- {t:"Mid-morning posting correlates with reach",h:"Your widest-reaching posts clustered around 08:00–11:00 local. Early 04:00–05:00 slots consistently under-reach.",r:"Recipe: prioritise the 08:00–11:00 window for your most important Reel of the day; demote low-stakes content to early slots."},
+ {t:"Shares are your growth engine",h:"Your top posts win on shares, not likes — across the set the most-shared posts took the most reach. Shares push content into non-follower feeds.",r:"Recipe: end every Reel with a reason to send it — 'tag a coworker who needs this', a relatable office moment, or a save-worthy tip. Engineer the share."},
+ {t:"Reels carry the account",h:"Reels generate the large majority of total views; almost every post above the average is a Reel. Static/feed content barely moves.",r:"Recipe: keep Reels at ~70%+ of output. Lead with motion in the first frame; static photos are filler only."},
+ {t:"A strong hook beats follower count",h:"On the same audience, reach swings from a few hundred to several thousand. The difference is the first 3 seconds, not luck.",r:"Recipe: open with a bold visual or curiosity line ('POV: your office on a Monday…'). Film 3 hook variants, keep the best 3-sec retention."},
+ {t:"Relatable office/coworking humor travels",h:"Your highest-engagement Reels lean on workplace-relatable moments — the audience self-identifies and tags peers, driving shares and comments.",r:"Recipe: turn everyday coworking pain points (meetings, deadlines, AC wars, coffee) into 7–12s skits. Familiar > polished."},
+ {t:"Carousels win when they're list-shaped",h:"Your breakout carousels package value (tips/checklist/list). Announcement-style carousels under-perform.",r:"Recipe: build carousels as '5 things / checklist / before-after' with a strong slide-1 title and a 'save this' final slide."},
+ {t:"Mid-morning posting reaches further",h:"Your widest-reaching posts cluster around 08:00–11:00. Very early 04:00–05:00 slots consistently under-reach.",r:"Recipe: prioritise 08:00–11:00 for your most important Reel; demote low-stakes content to early slots."},
 ];
 const notworking=[
- {t:"Posting twice a day dilutes your best content",h:"On double-post days the early slot almost always flops (e.g. 481 and 669 views) while the later Reel performs. You're splitting reach and cannibalising your own hero post.",r:"Fix: one strong post a day beats two weak ones. If posting twice, make the second a low-effort Story, not a feed Reel."},
- {t:"Feed carousels without a share-hook stall",h:"Carousels like the 731 and 1,033-view posts had 0 shares and 0–2 saves. They reached only ~380–500 accounts — basically followers only, no algorithmic push.",r:"Fix: never publish a carousel without a save/share trigger on slide 1 and the last slide. If it's just an announcement, make it a Story."},
- {t:"Weak hooks cap you at follower-only reach",h:"5 posts landed under 1,000 views with reach near 300–520. That's the floor IG gives any post; it means the hook never earned distribution beyond existing followers.",r:"Fix: if a Reel can't be summarised as an intriguing 3-sec promise, re-shoot the opening before publishing."},
- {t:"Zero-CTA posts get zero comments",h:"8 of 16 posts had 0 comments. Posts that asked nothing got nothing back, which also limits the engagement signal IG rewards.",r:"Fix: add one question or 'agree?' prompt in the caption or on-screen. Comments compound reach."},
- {t:"Saves are critically low (40 across 16 posts)",h:"Saves signal 'I'll come back to this' and strongly boost ranking. Averaging 2.5 saves/post means little of your content is reference-worthy.",r:"Fix: build at least 2 'save-bait' posts a week — tips, templates, local guides for coworkers/founders."},
- {t:"Static images are a dead format for you",h:"Single-image posts historically sit at the bottom on views and reach and you (correctly) cut them to zero this period. Don't bring them back as primary content.",r:"Fix: convert any photo idea into a 5-second Reel or a carousel. Reserve static only for community/recap filler."},
+ {t:"Posting twice a day dilutes your best content",h:"On double-post days the early slot almost always flops while the later Reel performs. You split reach and cannibalise your hero post.",r:"Fix: one strong post a day beats two weak ones. If posting twice, make the second a Story, not a feed Reel."},
+ {t:"Feed carousels without a share-hook stall",h:"Low-share, low-save carousels reach only followers — no algorithmic push beyond ~400–500 accounts.",r:"Fix: never publish a carousel without a save/share trigger on slide 1 and the last slide. Announcements should be Stories."},
+ {t:"Weak hooks cap you at follower-only reach",h:"Several posts land under 1,000 views with reach near 300–520 — the floor IG gives any post. The hook never earned distribution.",r:"Fix: if a Reel can't be summarised as an intriguing 3-sec promise, re-shoot the opening before publishing."},
+ {t:"Zero-CTA posts get zero comments",h:"Half your posts get 0 comments. Posts that ask nothing get nothing back, limiting the engagement signal IG rewards.",r:"Fix: add one question or 'agree?' prompt in the caption or on-screen. Comments compound reach."},
+ {t:"Saves are critically low",h:"Saves signal 'I'll come back to this' and strongly boost ranking. Your save rate per post is very low — little content is reference-worthy.",r:"Fix: build at least 2 'save-bait' posts a week — tips, templates, local guides for coworkers/founders."},
+ {t:"Static images are a dead format for you",h:"Single-image posts sit at the bottom on views and reach. Don't bring them back as primary content.",r:"Fix: convert any photo idea into a 5-second Reel or a carousel. Reserve static for community/recap filler."},
 ];
 const ic=(a,cls,tag)=>a.map(x=>`<div class="icard ${cls}"><div class="tag">${tag}</div><h4>${x.t}</h4><p>${x.h}</p><div class="recipe">${x.r}</div></div>`).join('');
 document.getElementById('working').innerHTML=ic(working,'work','✓ Working');
 document.getElementById('notworking').innerHTML=ic(notworking,'nowork','✕ Fix this');
 
-// ---- Detail table ----
-function note(p){
- if(p.shares>=15) return ["good",`Strong — ${p.shares} shares drove reach to ${p.reach.toLocaleString()}. Shareable format; replicate.`];
- if(p.views>=AVG) return ["good",`Above-average ${p.views.toLocaleString()} views; hook earned algorithmic push beyond followers.`];
- if(p.er>=4) return ["mid",`Low reach but high ${p.er.toFixed(1)}% ER — message landed, just needs a stronger hook to scale.`];
+function tnote(p){
+ if(p.shares>=15) return ["good",`Strong — ${p.shares} shares drove reach to ${fmt(p.reach)}. Shareable format; replicate.`];
+ if(p.views>=avgViews) return ["good",`Above-average ${fmt(p.views)} views; hook earned algorithmic push beyond followers.`];
+ if(p.er>=4) return ["mid",`Low reach but high ${p.er.toFixed(1)}% ER — message landed, needs a stronger hook to scale.`];
  if(p.reach<500) return ["low",`Follower-only reach (${p.reach}); weak hook + no share/save trigger. Re-think opening.`];
- return ["low",`Under-performed (${p.views.toLocaleString()} views, ${p.shares} shares). Add a share/save CTA and stronger first 3s.`];
+ return ["low",`Under-performed (${fmt(p.views)} views, ${p.shares} shares). Add a share/save CTA and stronger first 3s.`];
 }
-document.querySelector('#detail tbody').innerHTML=posts.map((p,i)=>{
- const[cls,txt]=note(p);
- return `<tr>
-   <td class="l">${i+1}</td><td class="l">${p.ts.slice(5)}</td><td class="l">${badge(p.type)}</td>
-   <td>${p.views.toLocaleString()}</td><td>${p.reach.toLocaleString()}</td>
-   <td>${p.likes}</td><td>${p.comments}</td><td>${p.saves}</td><td>${p.shares}</td>
-   <td>${p.eng}</td><td>${p.er.toFixed(1)}</td>
+document.querySelector('#detail tbody').innerHTML=posts.map((p,i)=>{const[cls,txt]=tnote(p);
+ return `<tr><td class="l">${i+1}</td><td class="l">${p.ts.slice(5)}</td><td class="l">${badge(p.type)}</td>
+   <td>${fmt(p.views)}</td><td>${fmt(p.reach)}</td><td>${p.likes}</td><td>${p.comments}</td><td>${p.saves}</td>
+   <td>${p.shares}</td><td>${p.eng}</td><td>${p.er.toFixed(1)}</td>
    <td class="l"><a class="link" href="${p.url}" target="_blank">open ↗</a></td>
-   <td class="note"><span class="pill ${cls}">${cls=='good'?'Working':cls=='mid'?'Mixed':'Weak'}</span> ${txt}</td>
- </tr>`;
-}).join('');
+   <td class="note"><span class="pill ${cls}">${cls=='good'?'Working':cls=='mid'?'Mixed':'Weak'}</span> ${txt}</td></tr>`;}).join('');
+document.getElementById('footnote').innerHTML=`Data source: Windsor.ai (Instagram connector) · Generated ${meta.generated} · Engagement rate = (likes+comments+saves+shares) ÷ reach.`;
 </script>
 </body>
 </html>
