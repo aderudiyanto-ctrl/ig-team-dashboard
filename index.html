@@ -25,8 +25,26 @@ header.top .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;align
 .period{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);
   border-radius:12px;padding:10px 16px;font-size:13px;text-align:right;backdrop-filter:blur(4px)}
 .period b{font-size:15px}
+/* ---- period controls ---- */
+.controls{position:sticky;top:0;z-index:20;background:rgba(251,245,233,.92);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);padding:12px 0;margin-bottom:6px;box-shadow:0 2px 10px rgba(120,90,60,.05)}
+.controls .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.segs{display:inline-flex;background:#FFF;border:1px solid var(--line);border-radius:11px;padding:4px;gap:2px}
+.seg{border:none;background:transparent;color:var(--ink2);font-weight:700;font-size:13px;
+  padding:7px 14px;border-radius:8px;cursor:pointer;transition:.12s;font-family:inherit}
+.seg:hover{color:var(--terra-d)}
+.seg.active{background:linear-gradient(120deg,#C0623C,#D49A5C);color:#FFF7EC;box-shadow:0 2px 6px rgba(160,78,46,.25)}
+.custom{display:none;align-items:center;gap:8px;font-size:13px;color:var(--ink2)}
+.custom.show{display:inline-flex;flex-wrap:wrap}
+.custom input[type=date]{font-family:inherit;font-size:13px;padding:6px 9px;border:1px solid var(--line);
+  border-radius:8px;background:#FFF;color:var(--ink)}
+.custom button{font-family:inherit;font-size:13px;font-weight:700;padding:7px 14px;border:none;border-radius:8px;
+  background:var(--olive);color:#F7F3E6;cursor:pointer}
+.rangelabel{margin-left:auto;font-size:13px;color:var(--ink);text-align:right;line-height:1.45}
+.rangelabel b{color:var(--terra-d)}
+.rangelabel .cmp{color:var(--ink2);font-size:12px}
 h2.sec{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;
-  color:var(--terra-d);margin:38px 0 14px;display:flex;align-items:center;gap:10px}
+  color:var(--terra-d);margin:34px 0 14px;display:flex;align-items:center;gap:10px}
 h2.sec::before{content:"";width:26px;height:4px;border-radius:3px;background:var(--clay)}
 .grid{display:grid;gap:16px}
 .kpis{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
@@ -35,7 +53,9 @@ h2.sec::before{content:"";width:26px;height:4px;border-radius:3px;background:var
 .kpi .lbl{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--ink2)}
 .kpi .val{font-size:30px;font-weight:800;margin-top:6px;color:var(--ink);letter-spacing:-1px}
 .kpi .sub{font-size:12.5px;margin-top:5px;color:var(--ink2)}
-.up{color:#3E7D52;font-weight:700}.down{color:#B5523E;font-weight:700}
+.delta{font-size:12.5px;font-weight:700;margin-top:6px;display:inline-flex;align-items:center;gap:5px}
+.delta .cmpv{color:var(--ink2);font-weight:500}
+.up{color:#3E7D52}.down{color:#B5523E}.flat{color:var(--ink2)}
 .accentbar{height:5px;border-radius:4px;margin-top:12px}
 .two{grid-template-columns:1fr 1fr}
 .three{grid-template-columns:1.3fr 1fr}
@@ -80,6 +100,8 @@ tr:nth-child(even) td{background:#FBF8F1}
 .pill{font-size:11px;font-weight:700;padding:2px 8px;border-radius:12px}
 .pill.good{background:#E3F0E2;color:#3E7D52}.pill.mid{background:#FBEFC9;color:#8A6A1C}.pill.low{background:#F6E1DA;color:#B5523E}
 .note{font-size:12px;color:var(--ink2);text-align:left;max-width:260px}
+.empty{padding:26px;text-align:center;color:var(--ink2);font-size:14px;background:var(--cardsoft);
+  border:1px dashed var(--sand);border-radius:14px}
 footer{margin-top:46px;padding:22px;background:var(--cardsoft);border:1px solid var(--line);
   border-radius:16px;font-size:13px;color:var(--ink2)}
 footer b{color:var(--terra-d)}
@@ -95,10 +117,27 @@ footer b{color:var(--terra-d)}
     <div class="period" id="periodBox"></div>
   </div>
 </header>
+<div class="controls">
+  <div class="wrap">
+    <div class="segs" id="segs">
+      <button class="seg" data-p="today">Today</button>
+      <button class="seg" data-p="7">Past 7 days</button>
+      <button class="seg" data-p="14">Past 14 days</button>
+      <button class="seg active" data-p="30">Past 30 days</button>
+      <button class="seg" data-p="custom">Custom</button>
+    </div>
+    <div class="custom" id="customBox">
+      <label>From <input type="date" id="cFrom"></label>
+      <label>To <input type="date" id="cTo"></label>
+      <button id="cApply">Apply</button>
+    </div>
+    <div class="rangelabel" id="rangeLabel"></div>
+  </div>
+</div>
 <div class="wrap">
   <h2 class="sec">Account Overview</h2>
   <div class="grid kpis" id="overview"></div>
-  <h2 class="sec">Content Performance · 16 Most Recent Posts</h2>
+  <h2 class="sec" id="perfHead">Content Performance</h2>
   <div class="grid kpis" id="perf"></div>
   <div class="grid kpis" id="engbreak" style="margin-top:16px"></div>
   <h2 class="sec">Views Per Post &amp; Content Mix</h2>
@@ -117,138 +156,250 @@ footer b{color:var(--terra-d)}
   <div class="grid ins" id="working"></div>
   <h2 class="sec">What's NOT Working — Stop Doing These</h2>
   <div class="grid ins" id="notworking"></div>
-  <h2 class="sec">Full Detail — All 16 Posts</h2>
+  <h2 class="sec" id="detailHead">Full Detail — Posts In Period</h2>
   <div class="tablewrap"><table id="detail"><thead><tr>
     <th class="l">#</th><th class="l">Date</th><th class="l">Type</th><th>Views</th><th>Reach</th>
     <th>Likes</th><th>Cmts</th><th>Saves</th><th>Shares</th><th>Eng</th><th>ER%</th>
     <th class="l">Link</th><th class="l">Highlight — why it worked / didn't</th>
   </tr></thead><tbody></tbody></table></div>
   <footer>
-    <b>Auto-update:</b> regenerated every morning at 8:00 AM from live Windsor.ai → Instagram data, then redeployed here. You get a notification in Claude on each refresh.<br>
+    <b>Auto-update:</b> regenerated every morning at 8:00 AM from live Windsor.ai → Instagram data, then redeployed here. Use the period buttons above to switch between today, the past 7 / 14 / 30 days, or a custom range — every metric recomputes and is compared against the previous equal-length period.<br>
     <span class="updated" id="footnote"></span>
   </footer>
 </div>
 <script>
-const posts=[{"ts": "2026-06-09", "type": "REELS", "url": "https://www.instagram.com/reel/DZXNhaxSdjE/", "views": 1131, "reach": 675, "likes": 37, "comments": 0, "saves": 3, "shares": 6, "eng": 57}, {"ts": "2026-06-09", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DZWgLFxkYTk/", "views": 388, "reach": 139, "likes": 5, "comments": 0, "saves": 1, "shares": 0, "eng": 6}, {"ts": "2026-06-08", "type": "REELS", "url": "https://www.instagram.com/reel/DZUWQI6ROJc/", "views": 2391, "reach": 1702, "likes": 33, "comments": 2, "saves": 7, "shares": 24, "eng": 66}, {"ts": "2026-06-08", "type": "REELS", "url": "https://www.instagram.com/reel/DZT8F03x1sQ/", "views": 842, "reach": 603, "likes": 18, "comments": 2, "saves": 2, "shares": 0, "eng": 26}, {"ts": "2026-06-05", "type": "REELS", "url": "https://www.instagram.com/reel/DZMyGV5NPeu/", "views": 7521, "reach": 5173, "likes": 110, "comments": 2, "saves": 10, "shares": 95, "eng": 219}, {"ts": "2026-06-05", "type": "REELS", "url": "https://www.instagram.com/reel/DZMKSr4ysb2/", "views": 732, "reach": 587, "likes": 3, "comments": 0, "saves": 0, "shares": 1, "eng": 4}, {"ts": "2026-06-04", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DZKQkWwmD9l/", "views": 1120, "reach": 573, "likes": 13, "comments": 0, "saves": 5, "shares": 8, "eng": 26}, {"ts": "2026-06-04", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DZJ_sQ0Eczt/", "views": 851, "reach": 366, "likes": 11, "comments": 0, "saves": 4, "shares": 1, "eng": 16}, {"ts": "2026-06-03", "type": "REELS", "url": "https://www.instagram.com/reel/DZHcOhrxZKV/", "views": 1481, "reach": 1095, "likes": 19, "comments": 0, "saves": 0, "shares": 1, "eng": 21}, {"ts": "2026-06-03", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DZHAw-XEVKK/", "views": 779, "reach": 413, "likes": 5, "comments": 0, "saves": 2, "shares": 0, "eng": 7}, {"ts": "2026-06-03", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DZGsIiCGEqf/", "views": 1066, "reach": 526, "likes": 12, "comments": 0, "saves": 0, "shares": 2, "eng": 15}, {"ts": "2026-06-02", "type": "REELS", "url": "https://www.instagram.com/reel/DZE3X2CRYIK/", "views": 1125, "reach": 870, "likes": 14, "comments": 0, "saves": 4, "shares": 4, "eng": 23}, {"ts": "2026-05-29", "type": "REELS", "url": "https://www.instagram.com/reel/DY6Vw1LxTNd/", "views": 5159, "reach": 3076, "likes": 31, "comments": 0, "saves": 1, "shares": 8, "eng": 40}, {"ts": "2026-05-26", "type": "REELS", "url": "https://www.instagram.com/reel/DYzJRpXP2Hl/", "views": 2710, "reach": 1905, "likes": 60, "comments": 5, "saves": 1, "shares": 3, "eng": 72}, {"ts": "2026-05-25", "type": "REELS", "url": "https://www.instagram.com/reel/DYv4-v8RRUM/", "views": 974, "reach": 740, "likes": 10, "comments": 7, "saves": 2, "shares": 1, "eng": 20}, {"ts": "2026-05-22", "type": "REELS", "url": "https://www.instagram.com/reel/DYoimEaRMpC/", "views": 4153, "reach": 3201, "likes": 82, "comments": 0, "saves": 5, "shares": 6, "eng": 97}];
-const meta={"totalFollowers": 35080, "growth30d": 491, "prev": 34589, "periodStart": "11 May", "periodEnd": "10 Jun 2026", "generated": "10 Jun 2026"};
-const n=posts.length;
-posts.forEach(p=>p.er=p.eng/p.reach*100);
-const sum=(f)=>posts.reduce((a,p)=>a+f(p),0);
-const fmt=(x)=>x.toLocaleString();
-const totalViews=sum(p=>p.views), videoViews=sum(p=>p.type=="REELS"?p.views:0);
-const totalEng=sum(p=>p.eng), totalReach=sum(p=>p.reach);
-const likes=sum(p=>p.likes),comments=sum(p=>p.comments),saves=sum(p=>p.saves),shares=sum(p=>p.shares);
-const avgViews=Math.round(totalViews/n);
-const avgER=(posts.reduce((a,p)=>a+p.er,0)/n);
-const reels=posts.filter(p=>p.type=="REELS").length;
-const carousel=posts.filter(p=>p.type=="CAROUSEL_ALBUM").length;
-const image=posts.filter(p=>p.type=="IMAGE").length;
-const story=posts.filter(p=>p.type=="STORY").length;
-const growthPct=(meta.growth30d/meta.prev*100).toFixed(2);
-const vidPct=Math.round(videoViews/totalViews*100);
-const sortedV=[...posts].sort((a,b)=>b.views-a.views);
-const median=(()=>{const v=[...posts].map(p=>p.views).sort((a,b)=>a-b);return Math.round((v[7]+v[8])/2);})();
+const ALLPOSTS=[{"ts": "2026-02-10", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DUkgUMeEaBS/", "views": 1588, "reach": 762, "likes": 15, "comments": 0, "saves": 10, "shares": 2, "eng": 28}, {"ts": "2026-02-11", "type": "REELS", "url": "https://www.instagram.com/reel/DUnDLsnES28/", "views": 1917, "reach": 1402, "likes": 15, "comments": 0, "saves": 3, "shares": 0, "eng": 20}, {"ts": "2026-02-11", "type": "REELS", "url": "https://www.instagram.com/reel/DUmqjdNkpv3/", "views": 2034, "reach": 1503, "likes": 25, "comments": 0, "saves": 4, "shares": 4, "eng": 36}, {"ts": "2026-02-11", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DUmTGmnEiZI/", "views": 1308, "reach": 647, "likes": 15, "comments": 0, "saves": 0, "shares": 0, "eng": 16}, {"ts": "2026-02-12", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DUpbLEzEfOJ/", "views": 1067, "reach": 513, "likes": 9, "comments": 0, "saves": 7, "shares": 1, "eng": 18}, {"ts": "2026-02-13", "type": "REELS", "url": "https://www.instagram.com/reel/DUsgnhqkpKj/", "views": 5191, "reach": 3201, "likes": 96, "comments": 21, "saves": 12, "shares": 76, "eng": 225}, {"ts": "2026-02-14", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DUuIR9Bkr1N/", "views": 869, "reach": 359, "likes": 8, "comments": 0, "saves": 3, "shares": 3, "eng": 15}, {"ts": "2026-02-16", "type": "IMAGE", "url": "https://www.instagram.com/p/DU0FZRDEauA/", "views": 1107, "reach": 640, "likes": 19, "comments": 0, "saves": 1, "shares": 1, "eng": 22}, {"ts": "2026-02-18", "type": "REELS", "url": "https://www.instagram.com/reel/DU5QMgjEUfY/", "views": 1361, "reach": 963, "likes": 21, "comments": 0, "saves": 0, "shares": 5, "eng": 32}, {"ts": "2026-02-18", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DU5ErdaEeWn/", "views": 1269, "reach": 548, "likes": 23, "comments": 0, "saves": 0, "shares": 1, "eng": 25}, {"ts": "2026-02-19", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DU77mkIka3D/", "views": 1443, "reach": 709, "likes": 25, "comments": 0, "saves": 3, "shares": 3, "eng": 34}, {"ts": "2026-02-19", "type": "REELS", "url": "https://www.instagram.com/reel/DU7rcPKkUc4/", "views": 2048, "reach": 1460, "likes": 30, "comments": 0, "saves": 2, "shares": 6, "eng": 41}, {"ts": "2026-02-19", "type": "REELS", "url": "https://www.instagram.com/reel/DU7cGhCEZO4/", "views": 1141, "reach": 896, "likes": 12, "comments": 0, "saves": 0, "shares": 0, "eng": 15}, {"ts": "2026-02-20", "type": "REELS", "url": "https://www.instagram.com/reel/DU-bRVMkT_x/", "views": 2162, "reach": 1514, "likes": 42, "comments": 0, "saves": 6, "shares": 14, "eng": 65}, {"ts": "2026-02-20", "type": "REELS", "url": "https://www.instagram.com/reel/DU9ztQREhqb/", "views": 1082, "reach": 803, "likes": 16, "comments": 0, "saves": 0, "shares": 0, "eng": 17}, {"ts": "2026-02-23", "type": "REELS", "url": "https://www.instagram.com/reel/DVGRWG8EuqZ/", "views": 1493, "reach": 1091, "likes": 21, "comments": 0, "saves": 0, "shares": 6, "eng": 28}, {"ts": "2026-02-23", "type": "REELS", "url": "https://www.instagram.com/reel/DVF8vm8EWOb/", "views": 27912, "reach": 16939, "likes": 178, "comments": 25, "saves": 201, "shares": 295, "eng": 707}, {"ts": "2026-02-24", "type": "REELS", "url": "https://www.instagram.com/reel/DVIhDiRgAsf/", "views": 1344, "reach": 1021, "likes": 9, "comments": 2, "saves": 9, "shares": 9, "eng": 31}, {"ts": "2026-02-24", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DVIMf6KkdWw/", "views": 1236, "reach": 556, "likes": 15, "comments": 0, "saves": 1, "shares": 1, "eng": 17}, {"ts": "2026-02-25", "type": "REELS", "url": "https://www.instagram.com/reel/DVLG42hEcfo/", "views": 1609, "reach": 1093, "likes": 25, "comments": 2, "saves": 3, "shares": 4, "eng": 36}, {"ts": "2026-02-25", "type": "REELS", "url": "https://www.instagram.com/reel/DVKvrFyEe0G/", "views": 1290, "reach": 943, "likes": 10, "comments": 0, "saves": 2, "shares": 7, "eng": 21}, {"ts": "2026-02-26", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DVN424tgPo1/", "views": 2303, "reach": 1305, "likes": 66, "comments": 1, "saves": 12, "shares": 7, "eng": 91}, {"ts": "2026-02-26", "type": "REELS", "url": "https://www.instagram.com/reel/DVNrCkpEZS8/", "views": 6572, "reach": 3989, "likes": 80, "comments": 4, "saves": 7, "shares": 17, "eng": 115}, {"ts": "2026-02-27", "type": "REELS", "url": "https://www.instagram.com/reel/DVQlDLlEq3H/", "views": 2920, "reach": 2144, "likes": 49, "comments": 0, "saves": 8, "shares": 11, "eng": 72}, {"ts": "2026-02-27", "type": "REELS", "url": "https://www.instagram.com/reel/DVQCHYAkZ5X/", "views": 11028, "reach": 7337, "likes": 170, "comments": 12, "saves": 16, "shares": 99, "eng": 302}, {"ts": "2026-03-02", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DVX-M78kSEk/", "views": 1103, "reach": 587, "likes": 8, "comments": 0, "saves": 3, "shares": 4, "eng": 16}, {"ts": "2026-03-02", "type": "REELS", "url": "https://www.instagram.com/reel/DVXpnVmkTuf/", "views": 1278, "reach": 918, "likes": 16, "comments": 0, "saves": 4, "shares": 0, "eng": 22}, {"ts": "2026-03-03", "type": "REELS", "url": "https://www.instagram.com/reel/DVawvtDEVlY/", "views": 1089, "reach": 820, "likes": 16, "comments": 0, "saves": 0, "shares": 1, "eng": 18}, {"ts": "2026-03-03", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DVaQ0JNAAsF/", "views": 1189, "reach": 613, "likes": 8, "comments": 0, "saves": 3, "shares": 0, "eng": 12}, {"ts": "2026-03-04", "type": "REELS", "url": "https://www.instagram.com/reel/DVdVn6-kVxc/", "views": 1189, "reach": 838, "likes": 27, "comments": 0, "saves": 6, "shares": 5, "eng": 41}, {"ts": "2026-03-04", "type": "REELS", "url": "https://www.instagram.com/reel/DVYL-R0kaqf/", "views": 2161, "reach": 1539, "likes": 22, "comments": 0, "saves": 16, "shares": 25, "eng": 64}, {"ts": "2026-03-05", "type": "REELS", "url": "https://www.instagram.com/reel/DVf9yBpkd-_/", "views": 1317, "reach": 881, "likes": 12, "comments": 0, "saves": 5, "shares": 6, "eng": 25}, {"ts": "2026-03-05", "type": "REELS", "url": "https://www.instagram.com/reel/DVfZODGkX-p/", "views": 1229, "reach": 822, "likes": 7, "comments": 0, "saves": 5, "shares": 2, "eng": 14}, {"ts": "2026-03-06", "type": "REELS", "url": "https://www.instagram.com/reel/DVis4lOEviS/", "views": 1959, "reach": 1364, "likes": 52, "comments": 4, "saves": 8, "shares": 3, "eng": 70}, {"ts": "2026-03-06", "type": "REELS", "url": "https://www.instagram.com/reel/DViYV_5kSmA/", "views": 3885, "reach": 2912, "likes": 67, "comments": 4, "saves": 8, "shares": 14, "eng": 97}, {"ts": "2026-03-09", "type": "REELS", "url": "https://www.instagram.com/reel/DVqOqlGEXEz/", "views": 1434, "reach": 1049, "likes": 5, "comments": 0, "saves": 2, "shares": 2, "eng": 9}, {"ts": "2026-03-09", "type": "REELS", "url": "https://www.instagram.com/reel/DVprAa2gKGL/", "views": 1040, "reach": 788, "likes": 10, "comments": 0, "saves": 4, "shares": 2, "eng": 17}, {"ts": "2026-03-10", "type": "REELS", "url": "https://www.instagram.com/reel/DVstDR6gKvB/", "views": 130179, "reach": 105393, "likes": 2111, "comments": 77, "saves": 1215, "shares": 2390, "eng": 5970}, {"ts": "2026-03-10", "type": "REELS", "url": "https://www.instagram.com/reel/DVsRLN_EcAH/", "views": 3225, "reach": 2385, "likes": 28, "comments": 0, "saves": 3, "shares": 10, "eng": 41}, {"ts": "2026-03-11", "type": "REELS", "url": "https://www.instagram.com/reel/DVvXGuMkp1Z/", "views": 1325, "reach": 936, "likes": 17, "comments": 0, "saves": 6, "shares": 3, "eng": 28}, {"ts": "2026-03-11", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DVuxXDMETgi/", "views": 1042, "reach": 480, "likes": 14, "comments": 0, "saves": 5, "shares": 0, "eng": 19}, {"ts": "2026-03-12", "type": "REELS", "url": "https://www.instagram.com/reel/DVx1BcOkfCR/", "views": 1087, "reach": 724, "likes": 9, "comments": 1, "saves": 8, "shares": 4, "eng": 23}, {"ts": "2026-03-12", "type": "REELS", "url": "https://www.instagram.com/reel/DVxWKdFkuWo/", "views": 1798, "reach": 1162, "likes": 52, "comments": 0, "saves": 7, "shares": 11, "eng": 73}, {"ts": "2026-03-13", "type": "REELS", "url": "https://www.instagram.com/reel/DV0hcBpkciY/", "views": 1456, "reach": 1095, "likes": 42, "comments": 4, "saves": 3, "shares": 1, "eng": 53}, {"ts": "2026-03-13", "type": "REELS", "url": "https://www.instagram.com/reel/DVz68TPkhe5/", "views": 6769, "reach": 4532, "likes": 66, "comments": 2, "saves": 12, "shares": 9, "eng": 93}, {"ts": "2026-03-16", "type": "REELS", "url": "https://www.instagram.com/reel/DV8BV1dkgNH/", "views": 1045, "reach": 721, "likes": 10, "comments": 0, "saves": 3, "shares": 0, "eng": 14}, {"ts": "2026-03-17", "type": "REELS", "url": "https://www.instagram.com/reel/DV-5_WLEV1X/", "views": 3406, "reach": 2366, "likes": 38, "comments": 1, "saves": 8, "shares": 7, "eng": 55}, {"ts": "2026-03-17", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DV-RklCADUN/", "views": 1011, "reach": 420, "likes": 14, "comments": 1, "saves": 2, "shares": 1, "eng": 19}, {"ts": "2026-03-18", "type": "REELS", "url": "https://www.instagram.com/reel/DWBa-_ZEe1k/", "views": 2003, "reach": 1351, "likes": 70, "comments": 10, "saves": 0, "shares": 5, "eng": 90}, {"ts": "2026-03-18", "type": "IMAGE", "url": "https://www.instagram.com/p/DWAuz1KAGA9/", "views": 1494, "reach": 759, "likes": 38, "comments": 0, "saves": 2, "shares": 4, "eng": 49}, {"ts": "2026-03-19", "type": "REELS", "url": "https://www.instagram.com/reel/DWD9dZlyHTH/", "views": 1920, "reach": 1372, "likes": 34, "comments": 0, "saves": 2, "shares": 16, "eng": 61}, {"ts": "2026-03-21", "type": "IMAGE", "url": "https://www.instagram.com/p/DWFeM5GEmJc/", "views": 1451, "reach": 724, "likes": 34, "comments": 1, "saves": 0, "shares": 2, "eng": 38}, {"ts": "2026-03-30", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DWftwcHgPDd/", "views": 1135, "reach": 507, "likes": 16, "comments": 0, "saves": 3, "shares": 0, "eng": 20}, {"ts": "2026-03-30", "type": "REELS", "url": "https://www.instagram.com/reel/DWfUeyKSwgd/", "views": 1307, "reach": 873, "likes": 17, "comments": 1, "saves": 10, "shares": 16, "eng": 46}, {"ts": "2026-03-31", "type": "REELS", "url": "https://www.instagram.com/reel/DWiRN9DyKgu/", "views": 977, "reach": 723, "likes": 9, "comments": 0, "saves": 3, "shares": 9, "eng": 21}, {"ts": "2026-04-01", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DWlb4npAJu3/", "views": 1052, "reach": 576, "likes": 9, "comments": 0, "saves": 4, "shares": 5, "eng": 19}, {"ts": "2026-04-01", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DWk1WwdAMX6/", "views": 1196, "reach": 527, "likes": 13, "comments": 1, "saves": 7, "shares": 1, "eng": 23}, {"ts": "2026-04-02", "type": "REELS", "url": "https://www.instagram.com/reel/DWoJpGVEQpP/", "views": 1093, "reach": 749, "likes": 26, "comments": 0, "saves": 6, "shares": 1, "eng": 34}, {"ts": "2026-04-02", "type": "REELS", "url": "https://www.instagram.com/reel/DWn43VHESNg/", "views": 1659, "reach": 1131, "likes": 50, "comments": 0, "saves": 3, "shares": 1, "eng": 54}, {"ts": "2026-04-06", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DWyJLqMkQRD/", "views": 1047, "reach": 444, "likes": 8, "comments": 1, "saves": 8, "shares": 0, "eng": 17}, {"ts": "2026-04-06", "type": "REELS", "url": "https://www.instagram.com/reel/DWxuB7PSmEm/", "views": 1053, "reach": 757, "likes": 13, "comments": 1, "saves": 0, "shares": 1, "eng": 15}, {"ts": "2026-04-07", "type": "REELS", "url": "https://www.instagram.com/reel/DW0q2HfyN-z/", "views": 2376, "reach": 1495, "likes": 44, "comments": 1, "saves": 4, "shares": 26, "eng": 80}, {"ts": "2026-04-07", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DW0WPVSgKOD/", "views": 1143, "reach": 499, "likes": 18, "comments": 0, "saves": 5, "shares": 2, "eng": 25}, {"ts": "2026-04-08", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DW3f47Lkc5n/", "views": 973, "reach": 461, "likes": 18, "comments": 0, "saves": 9, "shares": 11, "eng": 40}, {"ts": "2026-04-08", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DW2333XAEsO/", "views": 926, "reach": 443, "likes": 12, "comments": 0, "saves": 3, "shares": 0, "eng": 15}, {"ts": "2026-04-09", "type": "REELS", "url": "https://www.instagram.com/reel/DW54zhDgKZE/", "views": 835, "reach": 615, "likes": 14, "comments": 0, "saves": 3, "shares": 6, "eng": 23}, {"ts": "2026-04-09", "type": "REELS", "url": "https://www.instagram.com/reel/DW5cdazSlw5/", "views": 982, "reach": 639, "likes": 10, "comments": 0, "saves": 2, "shares": 7, "eng": 19}, {"ts": "2026-04-10", "type": "REELS", "url": "https://www.instagram.com/reel/DW8wdHpEVqA/", "views": 4613, "reach": 3527, "likes": 131, "comments": 3, "saves": 57, "shares": 23, "eng": 223}, {"ts": "2026-04-10", "type": "REELS", "url": "https://www.instagram.com/reel/DW8asYjEY_T/", "views": 1434, "reach": 1038, "likes": 29, "comments": 1, "saves": 5, "shares": 5, "eng": 42}, {"ts": "2026-04-13", "type": "REELS", "url": "https://www.instagram.com/reel/DXEHmuiSw6v/", "views": 1525, "reach": 1068, "likes": 21, "comments": 0, "saves": 7, "shares": 6, "eng": 37}, {"ts": "2026-04-13", "type": "REELS", "url": "https://www.instagram.com/reel/DXDnEc9y-Bi/", "views": 1015, "reach": 692, "likes": 10, "comments": 0, "saves": 3, "shares": 0, "eng": 13}, {"ts": "2026-04-14", "type": "REELS", "url": "https://www.instagram.com/reel/DXGXTB_S-py/", "views": 680, "reach": 484, "likes": 11, "comments": 0, "saves": 1, "shares": 3, "eng": 15}, {"ts": "2026-04-15", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DXJNj5aEX1W/", "views": 2706, "reach": 1303, "likes": 39, "comments": 0, "saves": 2, "shares": 3, "eng": 45}, {"ts": "2026-04-15", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DXIxO3_kRXE/", "views": 839, "reach": 360, "likes": 5, "comments": 0, "saves": 5, "shares": 0, "eng": 10}, {"ts": "2026-04-16", "type": "REELS", "url": "https://www.instagram.com/reel/DXMKkzDS-Oo/", "views": 2898, "reach": 1813, "likes": 110, "comments": 8, "saves": 6, "shares": 31, "eng": 155}, {"ts": "2026-04-16", "type": "REELS", "url": "https://www.instagram.com/reel/DXLeCI1SKQg/", "views": 1719, "reach": 1314, "likes": 31, "comments": 0, "saves": 6, "shares": 3, "eng": 43}, {"ts": "2026-04-17", "type": "REELS", "url": "https://www.instagram.com/reel/DXOvZ-5Spo8/", "views": 1014, "reach": 706, "likes": 20, "comments": 0, "saves": 2, "shares": 6, "eng": 28}, {"ts": "2026-04-17", "type": "REELS", "url": "https://www.instagram.com/reel/DXN5TF1EVYC/", "views": 1189, "reach": 838, "likes": 10, "comments": 0, "saves": 1, "shares": 3, "eng": 14}, {"ts": "2026-04-20", "type": "REELS", "url": "https://www.instagram.com/reel/DXV6GwaAG9V/", "views": 1769, "reach": 1286, "likes": 35, "comments": 2, "saves": 3, "shares": 5, "eng": 48}, {"ts": "2026-04-20", "type": "REELS", "url": "https://www.instagram.com/reel/DXVnvnVEaLf/", "views": 1458, "reach": 951, "likes": 24, "comments": 0, "saves": 3, "shares": 5, "eng": 32}, {"ts": "2026-04-21", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DXYi7j6AKAW/", "views": 2365, "reach": 1088, "likes": 33, "comments": 0, "saves": 3, "shares": 4, "eng": 40}, {"ts": "2026-04-22", "type": "REELS", "url": "https://www.instagram.com/reel/DXbSxUZSnNM/", "views": 1380, "reach": 915, "likes": 30, "comments": 0, "saves": 4, "shares": 12, "eng": 47}, {"ts": "2026-04-22", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DXa6q0LAM7Q/", "views": 815, "reach": 347, "likes": 4, "comments": 0, "saves": 4, "shares": 0, "eng": 8}, {"ts": "2026-04-23", "type": "REELS", "url": "https://www.instagram.com/reel/DXdgJquSUcY/", "views": 1058, "reach": 702, "likes": 11, "comments": 0, "saves": 3, "shares": 2, "eng": 16}, {"ts": "2026-04-24", "type": "REELS", "url": "https://www.instagram.com/reel/DXgBEyYAG2F/", "views": 6802, "reach": 5665, "likes": 188, "comments": 7, "saves": 32, "shares": 30, "eng": 272}, {"ts": "2026-04-27", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DXonl_Pkf9j/", "views": 1040, "reach": 463, "likes": 12, "comments": 0, "saves": 4, "shares": 2, "eng": 18}, {"ts": "2026-04-28", "type": "REELS", "url": "https://www.instagram.com/reel/DXrENF8SGQm/", "views": 2066, "reach": 1444, "likes": 31, "comments": 0, "saves": 1, "shares": 13, "eng": 47}, {"ts": "2026-04-29", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DXs7DzVANk8/", "views": 901, "reach": 438, "likes": 4, "comments": 0, "saves": 5, "shares": 0, "eng": 9}, {"ts": "2026-04-30", "type": "REELS", "url": "https://www.instagram.com/reel/DXwBXUCxy28/", "views": 12164, "reach": 7609, "likes": 86, "comments": 0, "saves": 7, "shares": 36, "eng": 133}, {"ts": "2026-05-01", "type": "IMAGE", "url": "https://www.instagram.com/p/DXxvsfYmGEf/", "views": 652, "reach": 464, "likes": 14, "comments": 0, "saves": 0, "shares": 2, "eng": 16}, {"ts": "2026-05-04", "type": "REELS", "url": "https://www.instagram.com/reel/DX6OCQLSjv1/", "views": 1143, "reach": 704, "likes": 17, "comments": 0, "saves": 5, "shares": 0, "eng": 22}, {"ts": "2026-05-04", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DX50QF2EXqG/", "views": 1002, "reach": 471, "likes": 7, "comments": 0, "saves": 4, "shares": 1, "eng": 13}, {"ts": "2026-05-05", "type": "REELS", "url": "https://www.instagram.com/reel/DX8cgh0yMLX/", "views": 837, "reach": 597, "likes": 7, "comments": 0, "saves": 2, "shares": 1, "eng": 10}, {"ts": "2026-05-05", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DX8OzONEU_a/", "views": 818, "reach": 444, "likes": 7, "comments": 0, "saves": 4, "shares": 1, "eng": 12}, {"ts": "2026-05-06", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DX-94Q9kdEK/", "views": 853, "reach": 365, "likes": 6, "comments": 0, "saves": 2, "shares": 0, "eng": 8}, {"ts": "2026-05-07", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DYB4ZPmkXh_/", "views": 1040, "reach": 468, "likes": 7, "comments": 0, "saves": 3, "shares": 3, "eng": 13}, {"ts": "2026-05-07", "type": "REELS", "url": "https://www.instagram.com/reel/DYBVeVzPffy/", "views": 905, "reach": 696, "likes": 8, "comments": 0, "saves": 8, "shares": 2, "eng": 18}, {"ts": "2026-05-08", "type": "REELS", "url": "https://www.instagram.com/reel/DYEmWTiyQly/", "views": 1257, "reach": 932, "likes": 20, "comments": 0, "saves": 1, "shares": 0, "eng": 22}, {"ts": "2026-05-08", "type": "REELS", "url": "https://www.instagram.com/reel/DYD4CarywX_/", "views": 4132, "reach": 3001, "likes": 155, "comments": 16, "saves": 7, "shares": 0, "eng": 182}, {"ts": "2026-05-12", "type": "REELS", "url": "https://www.instagram.com/reel/DYOzRH0Rt6j/", "views": 897, "reach": 754, "likes": 8, "comments": 0, "saves": 2, "shares": 3, "eng": 13}, {"ts": "2026-05-12", "type": "REELS", "url": "https://www.instagram.com/reel/DYOdVKnRWUF/", "views": 910, "reach": 687, "likes": 8, "comments": 0, "saves": 5, "shares": 2, "eng": 15}, {"ts": "2026-05-12", "type": "REELS", "url": "https://www.instagram.com/reel/DYOCp2CBOAZ/", "views": 1524, "reach": 1119, "likes": 16, "comments": 0, "saves": 0, "shares": 0, "eng": 16}, {"ts": "2026-05-13", "type": "REELS", "url": "https://www.instagram.com/reel/DYRfSfkRRC-/", "views": 4987, "reach": 3466, "likes": 77, "comments": 1, "saves": 0, "shares": 15, "eng": 98}, {"ts": "2026-05-18", "type": "REELS", "url": "https://www.instagram.com/reel/DYeS6TfSc6V/", "views": 5058, "reach": 4427, "likes": 111, "comments": 0, "saves": 6, "shares": 55, "eng": 175}, {"ts": "2026-05-18", "type": "REELS", "url": "https://www.instagram.com/reel/DYd3X9ZyY0A/", "views": 1020, "reach": 678, "likes": 15, "comments": 0, "saves": 1, "shares": 1, "eng": 19}, {"ts": "2026-05-19", "type": "REELS", "url": "https://www.instagram.com/reel/DYgz0o-Rfc9/", "views": 2433, "reach": 1870, "likes": 32, "comments": 0, "saves": 6, "shares": 6, "eng": 44}, {"ts": "2026-05-20", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DYjCR-sEeHK/", "views": 797, "reach": 418, "likes": 3, "comments": 0, "saves": 3, "shares": 1, "eng": 7}, {"ts": "2026-05-21", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DYl95rVgNai/", "views": 2609, "reach": 1140, "likes": 41, "comments": 4, "saves": 1, "shares": 20, "eng": 66}, {"ts": "2026-05-21", "type": "REELS", "url": "https://www.instagram.com/reel/DYllmWRx6Uz/", "views": 1937, "reach": 1254, "likes": 14, "comments": 8, "saves": 0, "shares": 8, "eng": 30}, {"ts": "2026-05-22", "type": "REELS", "url": "https://www.instagram.com/reel/DYoimEaRMpC/", "views": 4153, "reach": 3201, "likes": 82, "comments": 0, "saves": 5, "shares": 6, "eng": 97}, {"ts": "2026-05-25", "type": "REELS", "url": "https://www.instagram.com/reel/DYv4-v8RRUM/", "views": 974, "reach": 740, "likes": 10, "comments": 7, "saves": 2, "shares": 1, "eng": 20}, {"ts": "2026-05-26", "type": "REELS", "url": "https://www.instagram.com/reel/DYzJRpXP2Hl/", "views": 2710, "reach": 1905, "likes": 60, "comments": 5, "saves": 1, "shares": 3, "eng": 72}, {"ts": "2026-05-29", "type": "REELS", "url": "https://www.instagram.com/reel/DY6Vw1LxTNd/", "views": 5159, "reach": 3076, "likes": 31, "comments": 0, "saves": 1, "shares": 8, "eng": 40}, {"ts": "2026-06-02", "type": "REELS", "url": "https://www.instagram.com/reel/DZE3X2CRYIK/", "views": 1125, "reach": 870, "likes": 14, "comments": 0, "saves": 4, "shares": 4, "eng": 23}, {"ts": "2026-06-03", "type": "REELS", "url": "https://www.instagram.com/reel/DZHcOhrxZKV/", "views": 1481, "reach": 1095, "likes": 19, "comments": 0, "saves": 0, "shares": 1, "eng": 21}, {"ts": "2026-06-03", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DZHAw-XEVKK/", "views": 779, "reach": 413, "likes": 5, "comments": 0, "saves": 2, "shares": 0, "eng": 7}, {"ts": "2026-06-03", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DZGsIiCGEqf/", "views": 1066, "reach": 526, "likes": 12, "comments": 0, "saves": 0, "shares": 2, "eng": 15}, {"ts": "2026-06-04", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DZKQkWwmD9l/", "views": 1120, "reach": 573, "likes": 13, "comments": 0, "saves": 5, "shares": 8, "eng": 26}, {"ts": "2026-06-04", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DZJ_sQ0Eczt/", "views": 851, "reach": 366, "likes": 11, "comments": 0, "saves": 4, "shares": 1, "eng": 16}, {"ts": "2026-06-05", "type": "REELS", "url": "https://www.instagram.com/reel/DZMyGV5NPeu/", "views": 7521, "reach": 5173, "likes": 110, "comments": 2, "saves": 10, "shares": 95, "eng": 219}, {"ts": "2026-06-05", "type": "REELS", "url": "https://www.instagram.com/reel/DZMKSr4ysb2/", "views": 732, "reach": 587, "likes": 3, "comments": 0, "saves": 0, "shares": 1, "eng": 4}, {"ts": "2026-06-08", "type": "REELS", "url": "https://www.instagram.com/reel/DZUWQI6ROJc/", "views": 2391, "reach": 1702, "likes": 33, "comments": 2, "saves": 7, "shares": 24, "eng": 66}, {"ts": "2026-06-08", "type": "REELS", "url": "https://www.instagram.com/reel/DZT8F03x1sQ/", "views": 842, "reach": 603, "likes": 18, "comments": 2, "saves": 2, "shares": 0, "eng": 26}, {"ts": "2026-06-09", "type": "REELS", "url": "https://www.instagram.com/reel/DZXNhaxSdjE/", "views": 1131, "reach": 675, "likes": 37, "comments": 0, "saves": 3, "shares": 6, "eng": 57}, {"ts": "2026-06-09", "type": "CAROUSEL_ALBUM", "url": "https://www.instagram.com/p/DZWgLFxkYTk/", "views": 388, "reach": 139, "likes": 5, "comments": 0, "saves": 1, "shares": 0, "eng": 6}];
+const meta={"totalFollowers": 35080, "generated": "10 Jun 2026", "today": "2026-06-10", "dataStart": "2026-02-10", "dataEnd": "2026-06-09", "followersStart": "2026-05-11", "followersEnd": "2026-06-09", "followersDaily": [{"date": "2026-05-11", "growth": 11}, {"date": "2026-05-12", "growth": 13}, {"date": "2026-05-13", "growth": 21}, {"date": "2026-05-14", "growth": 19}, {"date": "2026-05-15", "growth": 17}, {"date": "2026-05-16", "growth": 13}, {"date": "2026-05-17", "growth": 12}, {"date": "2026-05-18", "growth": 18}, {"date": "2026-05-19", "growth": 20}, {"date": "2026-05-20", "growth": 15}, {"date": "2026-05-21", "growth": 15}, {"date": "2026-05-22", "growth": 11}, {"date": "2026-05-23", "growth": 15}, {"date": "2026-05-24", "growth": 11}, {"date": "2026-05-25", "growth": 8}, {"date": "2026-05-26", "growth": 16}, {"date": "2026-05-27", "growth": 18}, {"date": "2026-05-28", "growth": 12}, {"date": "2026-05-29", "growth": 17}, {"date": "2026-05-30", "growth": 8}, {"date": "2026-05-31", "growth": 12}, {"date": "2026-06-01", "growth": 17}, {"date": "2026-06-02", "growth": 15}, {"date": "2026-06-03", "growth": 61}, {"date": "2026-06-04", "growth": 30}, {"date": "2026-06-05", "growth": 25}, {"date": "2026-06-06", "growth": 20}, {"date": "2026-06-07", "growth": 12}, {"date": "2026-06-08", "growth": 9}, {"date": "2026-06-09", "growth": 0}]};
+ALLPOSTS.forEach(p=>p.er=p.reach?p.eng/p.reach*100:0);
 
-document.getElementById('periodBox').innerHTML=
- `Reporting period<br><b>${meta.periodStart} – ${meta.periodEnd}</b> · last 30 days<br><span style="opacity:.85">Post analysis: 16 most recent posts</span>`;
+const DAY=86400000;
+const pd=s=>{const[a,b,c]=s.split('-').map(Number);return Date.UTC(a,b-1,c);};
+const isoOf=ms=>new Date(ms).toISOString().slice(0,10);
+const addDays=(s,n)=>isoOf(pd(s)+n*DAY);
+const MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const fmtD=(s,yr)=>{const[a,b,c]=s.split('-').map(Number);return c+' '+MON[b-1]+(yr?' '+a:'');};
+function fmtRange(s,e){
+  const[sa,sb]=s.split('-'),[ea,eb]=e.split('-');
+  if(s===e) return fmtD(s,true);
+  const sameYear=sa===ea;
+  return fmtD(s,!sameYear)+' – '+fmtD(e,true);
+}
+const fmt=x=>x.toLocaleString();
+const TODAY=meta.today;
 
-const kpi=(lbl,val,sub,bar)=>`<div class="card kpi"><div class="lbl">${lbl}</div><div class="val">${val}</div>${sub?`<div class="sub">${sub}</div>`:''}${bar?`<div class="accentbar" style="background:${bar}"></div>`:''}</div>`;
-document.getElementById('overview').innerHTML=
- kpi('Total Followers',fmt(meta.totalFollowers),`<span class="up">▲ +${fmt(meta.growth30d)}</span> vs 30 days ago (+${growthPct}%)`,'linear-gradient(90deg,#C0623C,#D49A5C)')+
- kpi('Net Follower Growth (30d)','+'+fmt(meta.growth30d),`from ${fmt(meta.prev)} → ${fmt(meta.totalFollowers)}`,'linear-gradient(90deg,#6E7A4A,#9FB36A)')+
- kpi('Accounts Reached (16 posts)',fmt(totalReach),'unique reach across the set','linear-gradient(90deg,#5E8C7B,#8FB7A8)')+
- kpi('Posts Published',n,`${reels} Reels · ${carousel} Carousels · ${image} Static`,'linear-gradient(90deg,#C9962F,#E8CFA3)');
-document.getElementById('perf').innerHTML=
- kpi('Total Views',fmt(totalViews),'all content played/displayed','#C0623C')+
- kpi('Total Video Views',fmt(videoViews),`from ${reels} Reels (${vidPct}% of views)`,'#A24E2E')+
- kpi('Total Engagement',fmt(totalEng),'likes + comments + saves + shares','#6E7A4A')+
- kpi('Average Views / Post',fmt(avgViews),`median is far lower (~${fmt(median)})`,'#5E8C7B')+
- kpi('Avg Engagement Rate',avgER.toFixed(2)+'%','engagement ÷ reach, per post','#C9962F');
-document.getElementById('engbreak').innerHTML=
- kpi('Likes',fmt(likes),'','')+kpi('Comments',fmt(comments),'','')+kpi('Saves',fmt(saves),'','')+
- kpi('Shares',fmt(shares),'your #1 growth lever','');
+// follower growth over [start,end] limited to days we actually have data for
+const fmap={}; meta.followersDaily.forEach(r=>fmap[r.date]=r.growth);
+function followerGrowth(start,end){
+  let sum=0,have=0,total=0;
+  for(let t=pd(start);t<=pd(end);t+=DAY){total++;const k=isoOf(t);if(k in fmap){sum+=fmap[k];have++;}}
+  return {sum,have,total,full:have===total,none:have===0};
+}
 
-const badge=t=>t=="REELS"?'<span class="badge b-reel">Reel</span>':t=="CAROUSEL_ALBUM"?'<span class="badge b-car">Carousel</span>':'<span class="badge b-img">Image</span>';
-new Chart(document.getElementById('viewsChart'),{type:'bar',
- data:{labels:sortedV.map(p=>p.url.split('/').filter(Boolean).pop().slice(0,6)),
-  datasets:[{label:'Views',data:sortedV.map(p=>p.views),
-   backgroundColor:sortedV.map(p=>p.type=="REELS"?'#C0623C':p.type=="CAROUSEL_ALBUM"?'#6E7A4A':'#C9962F'),borderRadius:6}]},
- options:{plugins:{legend:{display:false},title:{display:true,text:'Views per post (Reels = terracotta, Carousel = olive)',color:'#7A6A58',font:{size:12}}},
-  scales:{y:{ticks:{color:'#7A6A58'},grid:{color:'#EFE6D4'}},x:{ticks:{color:'#9A8A78',font:{size:9}},grid:{display:false}}}}});
-new Chart(document.getElementById('mixChart'),{type:'doughnut',
- data:{labels:['Reels','Carousel','Single','Story'],datasets:[{data:[reels,carousel,image,story],
-  backgroundColor:['#C0623C','#6E7A4A','#C9962F','#5E8C7B'],borderWidth:2,borderColor:'#FFF'}]},
- options:{cutout:'62%',plugins:{legend:{display:false}}}});
-const reelsShareOfViews=Math.round(videoViews/totalViews*100);
-document.getElementById('mixLegend').innerHTML=
- `<div class="mixrow"><span class="dot" style="background:#C0623C"></span>Reels (Video) <b>${reels}</b></div>
-  <div class="mixrow"><span class="dot" style="background:#6E7A4A"></span>Carousel <b>${carousel}</b></div>
-  <div class="mixrow"><span class="dot" style="background:#C9962F"></span>Single Post <b>${image}</b></div>
-  <div class="mixrow"><span class="dot" style="background:#5E8C7B"></span>Story <b>${story}</b></div>
-  <div style="font-size:12px;color:var(--ink2);margin-top:6px">${Math.round(reels/n*100)}% of your output is Reels — and Reels drive ${reelsShareOfViews}% of views.</div>`;
+function metricsFor(start,end){
+  const ps=ALLPOSTS.filter(p=>p.ts>=start&&p.ts<=end);
+  const sum=f=>ps.reduce((a,p)=>a+f(p),0);
+  const n=ps.length;
+  const totalViews=sum(p=>p.views), totalReach=sum(p=>p.reach), totalEng=sum(p=>p.eng);
+  const videoViews=sum(p=>p.type=='REELS'?p.views:0);
+  return {
+    posts:ps, n, totalViews, totalReach, totalEng, videoViews,
+    likes:sum(p=>p.likes), comments:sum(p=>p.comments), saves:sum(p=>p.saves), shares:sum(p=>p.shares),
+    avgViews:n?Math.round(totalViews/n):0,
+    avgER:n?ps.reduce((a,p)=>a+p.er,0)/n:0,
+    reels:ps.filter(p=>p.type=='REELS').length,
+    carousel:ps.filter(p=>p.type=='CAROUSEL_ALBUM').length,
+    image:ps.filter(p=>p.type=='IMAGE').length,
+    story:ps.filter(p=>p.type=='STORY').length,
+    fg:followerGrowth(start,end),
+  };
+}
 
-// data-driven top5 narrative
-function whyTop(p,rank){
+// delta vs comparison period
+function delta(cur,prev,opts){
+  opts=opts||{};
+  if(prev===null||prev===undefined) return `<div class="delta flat"><span class="cmpv">no comparison data</span></div>`;
+  const d=cur-prev;
+  let pct = prev!==0 ? (d/Math.abs(prev)*100) : (cur!==0?null:0);
+  const good = opts.invert ? d<0 : d>0;
+  const cls = d===0?'flat':(good?'up':'down');
+  const arrow = d>0?'▲':(d<0?'▼':'■');
+  const pctTxt = pct===null ? 'new' : (Math.abs(pct)>=1000?'+999%':(d>=0?'+':'')+pct.toFixed(pct&&Math.abs(pct)<10?1:0)+'%');
+  const prevTxt = opts.pctVal ? prev.toFixed(2)+'%' : fmt(Math.round(prev));
+  return `<div class="delta ${cls}">${arrow} ${pctTxt} <span class="cmpv">vs ${prevTxt} prior</span></div>`;
+}
+
+const kpi=(lbl,val,sub,bar,deltaHtml)=>`<div class="card kpi"><div class="lbl">${lbl}</div><div class="val">${val}</div>${sub?`<div class="sub">${sub}</div>`:''}${deltaHtml||''}${bar?`<div class="accentbar" style="background:${bar}"></div>`:''}</div>`;
+
+const badge=t=>t=='REELS'?'<span class="badge b-reel">Reel</span>':t=='CAROUSEL_ALBUM'?'<span class="badge b-car">Carousel</span>':t=='STORY'?'<span class="badge b-img">Story</span>':'<span class="badge b-img">Image</span>';
+
+let viewsChart=null, mixChart=null;
+
+function whyTop(p,rank,avgV){
   const parts=[];
   const shareRatio=p.eng?Math.round(p.shares/p.eng*100):0;
-  if(rank===0) parts.push(`<b>Runaway winner</b> of the period.`);
+  if(rank===0) parts.push(`<b>Top post</b> of the period.`);
   else if(p.reach>=2500) parts.push(`<b>Wide-reach performer.</b>`);
   else if(p.er>=4) parts.push(`<b>High-quality engagement.</b>`);
   else parts.push(`<b>Strong performer.</b>`);
   parts.push(`${fmt(p.views)} views on ${fmt(p.reach)} reach.`);
-  if(p.shares>=15) parts.push(`<b>${p.shares} shares</b> (${shareRatio}% of its engagement) — shares are the #1 signal pushing ${p.type=="REELS"?"a Reel":"a post"} into non-follower feeds, which is why reach is well above your baseline. Replicate the share trigger.`);
-  else if(p.er>=3.6) parts.push(`Engagement rate of <b>${p.er.toFixed(1)}%</b> beats your average — the people who saw it acted. The message/CTA landed.`);
-  else parts.push(`The algorithm pushed it on watch-through/retention rather than likes — a strong hook + tight edit kept people watching. Replicate the pacing.`);
+  if(p.shares>=15) parts.push(`<b>${p.shares} shares</b> (${shareRatio}% of its engagement) — shares are the #1 signal pushing ${p.type=='REELS'?'a Reel':'a post'} into non-follower feeds, which is why reach is well above baseline. Replicate the share trigger.`);
+  else if(p.er>=3.6) parts.push(`Engagement rate of <b>${p.er.toFixed(1)}%</b> beats the average — the people who saw it acted.`);
+  else parts.push(`Pushed on watch-through/retention rather than likes — a strong hook + tight edit kept people watching.`);
   if(p.saves>=8) parts.push(`High saves (${p.saves}) confirm it was reference-worthy.`);
-  if(p.type=="CAROUSEL_ALBUM") parts.push(`Notably your top non-Reel — proof a list/value carousel can travel.`);
+  if(p.type=='CAROUSEL_ALBUM') parts.push(`Notably a top non-Reel — proof a list/value carousel can travel.`);
   return parts.join(' ');
 }
-const top5=sortedV.slice(0,5);
-document.getElementById('top5').innerHTML=top5.map((p,i)=>`
- <div class="tcard"><div class="rank">${i+1}</div><div>
-   ${badge(p.type)} <a class="link" href="${p.url}" target="_blank">${p.url.replace('https://www.','')}</a>
-   <div class="tmeta">
-     <span>Views <b>${fmt(p.views)}</b></span><span>Reach <b>${fmt(p.reach)}</b></span>
-     <span>Likes <b>${p.likes}</b></span><span>Comments <b>${p.comments}</b></span>
-     <span>Saves <b>${p.saves}</b></span><span>Shares <b>${p.shares}</b></span>
-     <span>ER <b>${p.er.toFixed(1)}%</b></span>
-   </div><div class="why">${whyTop(p,i)}</div>
- </div></div>`).join('');
 
 const working=[
- {t:"Shares are your growth engine",h:"Your top posts win on shares, not likes — across the set the most-shared posts took the most reach. Shares push content into non-follower feeds.",r:"Recipe: end every Reel with a reason to send it — 'tag a coworker who needs this', a relatable office moment, or a save-worthy tip. Engineer the share."},
- {t:"Reels carry the account",h:"Reels generate the large majority of total views; almost every post above the average is a Reel. Static/feed content barely moves.",r:"Recipe: keep Reels at ~70%+ of output. Lead with motion in the first frame; static photos are filler only."},
- {t:"A strong hook beats follower count",h:"On the same audience, reach swings from a few hundred to several thousand. The difference is the first 3 seconds, not luck.",r:"Recipe: open with a bold visual or curiosity line ('POV: your office on a Monday…'). Film 3 hook variants, keep the best 3-sec retention."},
- {t:"Relatable office/coworking humor travels",h:"Your highest-engagement Reels lean on workplace-relatable moments — the audience self-identifies and tags peers, driving shares and comments.",r:"Recipe: turn everyday coworking pain points (meetings, deadlines, AC wars, coffee) into 7–12s skits. Familiar > polished."},
+ {t:"Shares are your growth engine",h:"Your top posts win on shares, not likes — the most-shared posts take the most reach. Shares push content into non-follower feeds.",r:"Recipe: end every Reel with a reason to send it — 'tag a coworker who needs this', a relatable office moment, or a save-worthy tip."},
+ {t:"Reels carry the account",h:"Reels generate the large majority of total views; almost every post above the average is a Reel. Static/feed content barely moves.",r:"Recipe: keep Reels at ~70%+ of output. Lead with motion in the first frame."},
+ {t:"A strong hook beats follower count",h:"On the same audience, reach swings from a few hundred to several thousand. The difference is the first 3 seconds, not luck.",r:"Recipe: open with a bold visual or curiosity line. Film 3 hook variants, keep the best 3-sec retention."},
+ {t:"Relatable office/coworking humor travels",h:"Your highest-engagement Reels lean on workplace-relatable moments — the audience self-identifies and tags peers.",r:"Recipe: turn everyday coworking pain points (meetings, deadlines, AC wars, coffee) into 7–12s skits."},
  {t:"Carousels win when they're list-shaped",h:"Your breakout carousels package value (tips/checklist/list). Announcement-style carousels under-perform.",r:"Recipe: build carousels as '5 things / checklist / before-after' with a strong slide-1 title and a 'save this' final slide."},
  {t:"Mid-morning posting reaches further",h:"Your widest-reaching posts cluster around 08:00–11:00. Very early 04:00–05:00 slots consistently under-reach.",r:"Recipe: prioritise 08:00–11:00 for your most important Reel; demote low-stakes content to early slots."},
 ];
 const notworking=[
  {t:"Posting twice a day dilutes your best content",h:"On double-post days the early slot almost always flops while the later Reel performs. You split reach and cannibalise your hero post.",r:"Fix: one strong post a day beats two weak ones. If posting twice, make the second a Story, not a feed Reel."},
- {t:"Feed carousels without a share-hook stall",h:"Low-share, low-save carousels reach only followers — no algorithmic push beyond ~400–500 accounts.",r:"Fix: never publish a carousel without a save/share trigger on slide 1 and the last slide. Announcements should be Stories."},
- {t:"Weak hooks cap you at follower-only reach",h:"Several posts land under 1,000 views with reach near 300–520 — the floor IG gives any post. The hook never earned distribution.",r:"Fix: if a Reel can't be summarised as an intriguing 3-sec promise, re-shoot the opening before publishing."},
- {t:"Zero-CTA posts get zero comments",h:"Half your posts get 0 comments. Posts that ask nothing get nothing back, limiting the engagement signal IG rewards.",r:"Fix: add one question or 'agree?' prompt in the caption or on-screen. Comments compound reach."},
- {t:"Saves are critically low",h:"Saves signal 'I'll come back to this' and strongly boost ranking. Your save rate per post is very low — little content is reference-worthy.",r:"Fix: build at least 2 'save-bait' posts a week — tips, templates, local guides for coworkers/founders."},
- {t:"Static images are a dead format for you",h:"Single-image posts sit at the bottom on views and reach. Don't bring them back as primary content.",r:"Fix: convert any photo idea into a 5-second Reel or a carousel. Reserve static for community/recap filler."},
+ {t:"Feed carousels without a share-hook stall",h:"Low-share, low-save carousels reach only followers — no algorithmic push beyond ~400–500 accounts.",r:"Fix: never publish a carousel without a save/share trigger on slide 1 and the last slide."},
+ {t:"Weak hooks cap you at follower-only reach",h:"Several posts land under 1,000 views with reach near 300–520 — the floor IG gives any post.",r:"Fix: if a Reel can't be summarised as an intriguing 3-sec promise, re-shoot the opening before publishing."},
+ {t:"Zero-CTA posts get zero comments",h:"Half your posts get 0 comments. Posts that ask nothing get nothing back, limiting the engagement signal IG rewards.",r:"Fix: add one question or 'agree?' prompt in the caption or on-screen."},
+ {t:"Saves are critically low",h:"Saves signal 'I'll come back to this' and strongly boost ranking. Your save rate per post is very low.",r:"Fix: build at least 2 'save-bait' posts a week — tips, templates, local guides."},
+ {t:"Static images are a dead format for you",h:"Single-image posts sit at the bottom on views and reach. Don't bring them back as primary content.",r:"Fix: convert any photo idea into a 5-second Reel or a carousel."},
 ];
 const ic=(a,cls,tag)=>a.map(x=>`<div class="icard ${cls}"><div class="tag">${tag}</div><h4>${x.t}</h4><p>${x.h}</p><div class="recipe">${x.r}</div></div>`).join('');
-document.getElementById('working').innerHTML=ic(working,'work','✓ Working');
-document.getElementById('notworking').innerHTML=ic(notworking,'nowork','✕ Fix this');
 
-function tnote(p){
+function tnote(p,avgViews){
  if(p.shares>=15) return ["good",`Strong — ${p.shares} shares drove reach to ${fmt(p.reach)}. Shareable format; replicate.`];
  if(p.views>=avgViews) return ["good",`Above-average ${fmt(p.views)} views; hook earned algorithmic push beyond followers.`];
  if(p.er>=4) return ["mid",`Low reach but high ${p.er.toFixed(1)}% ER — message landed, needs a stronger hook to scale.`];
- if(p.reach<500) return ["low",`Follower-only reach (${p.reach}); weak hook + no share/save trigger. Re-think opening.`];
+ if(p.reach<500) return ["low",`Follower-only reach (${p.reach}); weak hook + no share/save trigger.`];
  return ["low",`Under-performed (${fmt(p.views)} views, ${p.shares} shares). Add a share/save CTA and stronger first 3s.`];
 }
-document.querySelector('#detail tbody').innerHTML=posts.map((p,i)=>{const[cls,txt]=tnote(p);
- return `<tr><td class="l">${i+1}</td><td class="l">${p.ts.slice(5)}</td><td class="l">${badge(p.type)}</td>
-   <td>${fmt(p.views)}</td><td>${fmt(p.reach)}</td><td>${p.likes}</td><td>${p.comments}</td><td>${p.saves}</td>
-   <td>${p.shares}</td><td>${p.eng}</td><td>${p.er.toFixed(1)}</td>
-   <td class="l"><a class="link" href="${p.url}" target="_blank">open ↗</a></td>
-   <td class="note"><span class="pill ${cls}">${cls=='good'?'Working':cls=='mid'?'Mixed':'Weak'}</span> ${txt}</td></tr>`;}).join('');
-document.getElementById('footnote').innerHTML=`Data source: Windsor.ai (Instagram connector) · Generated ${meta.generated} · Engagement rate = (likes+comments+saves+shares) ÷ reach.`;
+
+function render(start,end){
+  const cur=metricsFor(start,end);
+  const len=Math.round((pd(end)-pd(start))/DAY)+1;
+  const cEnd=addDays(start,-1), cStart=addDays(cEnd,-(len-1));
+  const prev=metricsFor(cStart,cEnd);
+  const n=cur.n;
+
+  // header + range labels
+  const lenTxt=len===1?'1 day':len+' days';
+  document.getElementById('periodBox').innerHTML=
+   `Reporting period<br><b>${fmtRange(start,end)}</b> · ${lenTxt}<br><span style="opacity:.85">vs prior ${lenTxt}: ${fmtRange(cStart,cEnd)}</span>`;
+  document.getElementById('rangeLabel').innerHTML=
+   `<b>${fmtRange(start,end)}</b> · ${lenTxt} · ${n} post${n===1?'':'s'}<br><span class="cmp">compared with ${fmtRange(cStart,cEnd)}</span>`;
+  document.getElementById('perfHead').textContent=`Content Performance · ${n} post${n===1?'':'s'} in period`;
+  document.getElementById('detailHead').textContent=`Full Detail — ${n} post${n===1?'':'s'} in period`;
+
+  // follower growth display
+  let fgVal, fgSub, fgDelta;
+  if(cur.fg.none){ fgVal='—'; fgSub='follower data starts '+fmtD(meta.followersStart,true); fgDelta=''; }
+  else { fgVal='+'+fmt(cur.fg.sum); fgSub=cur.fg.full?'net new followers in period':`net new (${cur.fg.have}/${cur.fg.total} days have data)`;
+    fgDelta=delta(cur.fg.sum, prev.fg.full?prev.fg.sum:null); }
+
+  document.getElementById('overview').innerHTML=
+   kpi('Total Followers',fmt(meta.totalFollowers),'current account total (point-in-time)','linear-gradient(90deg,#C0623C,#D49A5C)','')+
+   kpi('Net Follower Growth',fgVal,fgSub,'linear-gradient(90deg,#6E7A4A,#9FB36A)',fgDelta)+
+   kpi('Accounts Reached',fmt(cur.totalReach),'reach across posts in period','linear-gradient(90deg,#5E8C7B,#8FB7A8)',delta(cur.totalReach,prev.totalReach))+
+   kpi('Posts Published',n,`${cur.reels} Reels · ${cur.carousel} Carousels · ${cur.image} Static`,'linear-gradient(90deg,#C9962F,#E8CFA3)',delta(n,prev.n));
+
+  const vidPct=cur.totalViews?Math.round(cur.videoViews/cur.totalViews*100):0;
+  document.getElementById('perf').innerHTML=
+   kpi('Total Views',fmt(cur.totalViews),'all content played/displayed','#C0623C',delta(cur.totalViews,prev.totalViews))+
+   kpi('Total Video Views',fmt(cur.videoViews),`from ${cur.reels} Reels (${vidPct}% of views)`,'#A24E2E',delta(cur.videoViews,prev.videoViews))+
+   kpi('Total Engagement',fmt(cur.totalEng),'likes + comments + saves + shares','#6E7A4A',delta(cur.totalEng,prev.totalEng))+
+   kpi('Average Views / Post',fmt(cur.avgViews),'mean across posts in period','#5E8C7B',delta(cur.avgViews,prev.avgViews))+
+   kpi('Avg Engagement Rate',cur.avgER.toFixed(2)+'%','engagement ÷ reach, per post','#C9962F',delta(cur.avgER,prev.n?prev.avgER:null,{pctVal:true}));
+  document.getElementById('engbreak').innerHTML=
+   kpi('Likes',fmt(cur.likes),'','',delta(cur.likes,prev.likes))+
+   kpi('Comments',fmt(cur.comments),'','',delta(cur.comments,prev.comments))+
+   kpi('Saves',fmt(cur.saves),'','',delta(cur.saves,prev.saves))+
+   kpi('Shares',fmt(cur.shares),'your #1 growth lever','',delta(cur.shares,prev.shares));
+
+  // charts
+  const sortedV=[...cur.posts].sort((a,b)=>b.views-a.views);
+  if(viewsChart){viewsChart.destroy();viewsChart=null;}
+  if(mixChart){mixChart.destroy();mixChart=null;}
+  if(n>0){
+   viewsChart=new Chart(document.getElementById('viewsChart'),{type:'bar',
+    data:{labels:sortedV.map(p=>p.url.split('/').filter(Boolean).pop().slice(0,6)),
+     datasets:[{label:'Views',data:sortedV.map(p=>p.views),
+      backgroundColor:sortedV.map(p=>p.type=='REELS'?'#C0623C':p.type=='CAROUSEL_ALBUM'?'#6E7A4A':'#C9962F'),borderRadius:6}]},
+    options:{plugins:{legend:{display:false},title:{display:true,text:'Views per post (Reels = terracotta, Carousel = olive)',color:'#7A6A58',font:{size:12}}},
+     scales:{y:{ticks:{color:'#7A6A58'},grid:{color:'#EFE6D4'}},x:{ticks:{color:'#9A8A78',font:{size:9}},grid:{display:false}}}}});
+   mixChart=new Chart(document.getElementById('mixChart'),{type:'doughnut',
+    data:{labels:['Reels','Carousel','Single','Story'],datasets:[{data:[cur.reels,cur.carousel,cur.image,cur.story],
+     backgroundColor:['#C0623C','#6E7A4A','#C9962F','#5E8C7B'],borderWidth:2,borderColor:'#FFF'}]},
+    options:{cutout:'62%',plugins:{legend:{display:false}}}});
+  }
+  const reelsShareOfViews=cur.totalViews?Math.round(cur.videoViews/cur.totalViews*100):0;
+  document.getElementById('mixLegend').innerHTML= n===0 ? '<div style="font-size:13px;color:var(--ink2)">No posts in this period.</div>' :
+   `<div class="mixrow"><span class="dot" style="background:#C0623C"></span>Reels (Video) <b>${cur.reels}</b></div>
+    <div class="mixrow"><span class="dot" style="background:#6E7A4A"></span>Carousel <b>${cur.carousel}</b></div>
+    <div class="mixrow"><span class="dot" style="background:#C9962F"></span>Single Post <b>${cur.image}</b></div>
+    <div class="mixrow"><span class="dot" style="background:#5E8C7B"></span>Story <b>${cur.story}</b></div>
+    <div style="font-size:12px;color:var(--ink2);margin-top:6px">${Math.round(cur.reels/n*100)}% of output is Reels — and Reels drive ${reelsShareOfViews}% of views.</div>`;
+
+  // top 5
+  const top5=sortedV.slice(0,5);
+  document.getElementById('top5').innerHTML= n===0 ? '<div class="empty">No posts published in this period. Try a wider range.</div>' :
+   top5.map((p,i)=>`
+   <div class="tcard"><div class="rank">${i+1}</div><div>
+     ${badge(p.type)} <a class="link" href="${p.url}" target="_blank">${p.url.replace('https://www.','')}</a>
+     <div class="tmeta">
+       <span>Views <b>${fmt(p.views)}</b></span><span>Reach <b>${fmt(p.reach)}</b></span>
+       <span>Likes <b>${p.likes}</b></span><span>Comments <b>${p.comments}</b></span>
+       <span>Saves <b>${p.saves}</b></span><span>Shares <b>${p.shares}</b></span>
+       <span>ER <b>${p.er.toFixed(1)}%</b></span>
+     </div><div class="why">${whyTop(p,i,cur.avgViews)}</div>
+   </div></div>`).join('');
+
+  // detail table
+  const byDate=[...cur.posts].sort((a,b)=>b.ts.localeCompare(a.ts)||0);
+  const tb=document.querySelector('#detail tbody');
+  tb.innerHTML= n===0 ? `<tr><td class="l" colspan="13" style="padding:22px;text-align:center;color:var(--ink2)">No posts in this period.</td></tr>` :
+   byDate.map((p,i)=>{const[cls,txt]=tnote(p,cur.avgViews);
+   return `<tr><td class="l">${i+1}</td><td class="l">${p.ts.slice(5)}</td><td class="l">${badge(p.type)}</td>
+     <td>${fmt(p.views)}</td><td>${fmt(p.reach)}</td><td>${p.likes}</td><td>${p.comments}</td><td>${p.saves}</td>
+     <td>${p.shares}</td><td>${p.eng}</td><td>${p.er.toFixed(1)}</td>
+     <td class="l"><a class="link" href="${p.url}" target="_blank">open ↗</a></td>
+     <td class="note"><span class="pill ${cls}">${cls=='good'?'Working':cls=='mid'?'Mixed':'Weak'}</span> ${txt}</td></tr>`;}).join('');
+}
+
+document.getElementById('working').innerHTML=ic(working,'work','✓ Working');
+document.getElementById('notworking').innerHTML=ic(notworking,'nowork','✕ Fix this');
+document.getElementById('footnote').innerHTML=`Data source: Windsor.ai (Instagram connector) · Generated ${meta.generated} · Posts ${fmtD(meta.dataStart,true)}–${fmtD(meta.dataEnd,true)} available · Follower-growth data limited to the last 30 days (Windsor metric cap) · Engagement rate = (likes+comments+saves+shares) ÷ reach.`;
+
+// ---- period control wiring ----
+function presetRange(p){
+  if(p==='today') return [TODAY,TODAY];
+  const days=parseInt(p,10);
+  return [addDays(TODAY,-(days-1)),TODAY];
+}
+const segs=document.getElementById('segs');
+const customBox=document.getElementById('customBox');
+const cFrom=document.getElementById('cFrom'), cTo=document.getElementById('cTo');
+cFrom.min=cTo.min=meta.dataStart; cFrom.max=cTo.max=TODAY;
+cFrom.value=addDays(TODAY,-6); cTo.value=TODAY;
+
+segs.addEventListener('click',e=>{
+  const b=e.target.closest('.seg'); if(!b) return;
+  [...segs.children].forEach(s=>s.classList.toggle('active',s===b));
+  const p=b.dataset.p;
+  if(p==='custom'){ customBox.classList.add('show'); applyCustom(); }
+  else { customBox.classList.remove('show'); const[s,e2]=presetRange(p); render(s,e2); }
+});
+function applyCustom(){
+  let s=cFrom.value, e=cTo.value;
+  if(!s||!e) return;
+  if(s>e){const t=s;s=e;e=t;cFrom.value=s;cTo.value=e;}
+  render(s,e);
+}
+document.getElementById('cApply').addEventListener('click',applyCustom);
+
+// default: past 30 days
+render(...presetRange('30'));
 </script>
 </body>
 </html>
