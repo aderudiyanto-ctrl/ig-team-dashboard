@@ -103,16 +103,19 @@ tr:nth-child(even) td{background:#FBF8F1}
 .empty{padding:26px;text-align:center;color:var(--ink2);font-size:14px;background:var(--cardsoft);
   border:1px dashed var(--sand);border-radius:14px}
 /* ---- creative attribute analysis ---- */
-#creative table{min-width:1180px}
+#creative{min-width:1360px}
 #creative td{vertical-align:top}
-.hookcell{max-width:230px;font-size:12.5px;color:var(--ink);font-style:italic}
+/* frozen (sticky) green header inside a self-scrolling table */
+.freeze{max-height:78vh;overflow:auto}
+.freeze thead th{position:sticky;top:0;z-index:6;box-shadow:0 2px 0 rgba(0,0,0,.04)}
+.hookcell{max-width:210px;font-size:12.5px;color:var(--ink);font-style:italic}
 .anglecell{font-size:11px;font-weight:700;white-space:nowrap}
 .acard{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:#EFE6D4;color:#7A5A38}
 .a-humor{background:#F6E3D2;color:#A24E2E}.a-promo{background:#FBEFC9;color:#8A6A1C}.a-story{background:#E5ECD6;color:#5C6A38}
 .a-edu{background:#DCEAF0;color:#3C6A7A}.a-trend{background:#EFDCEF;color:#7A3C7A}.a-season{background:#F3E7D2;color:#9A7A2C}.a-news{background:#E0E8D6;color:#5C6A38}
 .verd{font-size:11px;font-weight:800;padding:2px 9px;border-radius:12px;white-space:nowrap}
 .v-hero{background:#E3F0E2;color:#2F7D45}.v-strong{background:#E7F0DC;color:#5C7A2C}.v-avg{background:#FBEFC9;color:#8A6A1C}.v-weak{background:#F6E1DA;color:#B5523E}
-.anacell{max-width:320px;font-size:12px;color:var(--ink2);text-align:left}
+.anacell{min-width:380px;max-width:560px;font-size:12.5px;line-height:1.5;color:var(--ink2);text-align:left}
 .anacell b{color:var(--terra-d)}
 /* ---- next 7 days plan ---- */
 .plan{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:16px}
@@ -180,7 +183,7 @@ footer b{color:var(--terra-d)}
   <div class="grid ins" id="notworking"></div>
   <h2 class="sec" id="creativeHead">Creative Attribute Analysis</h2>
   <div class="planhint" id="creativeHint"></div>
-  <div class="tablewrap"><table id="creative"><thead><tr>
+  <div class="tablewrap freeze"><table id="creative"><thead><tr>
     <th class="l">Content &amp; Link</th><th class="l">Format</th><th class="l">Hook</th><th class="l">Angle</th>
     <th>Views</th><th>Reach</th><th>Likes</th><th>Cmts</th><th>Saves</th><th>Shares</th><th>ER%</th>
     <th class="l">Verdict</th><th class="l">Analysis — why it worked / didn't</th>
