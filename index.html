@@ -103,12 +103,16 @@ tr:nth-child(even) td{background:#FBF8F1}
 .empty{padding:26px;text-align:center;color:var(--ink2);font-size:14px;background:var(--cardsoft);
   border:1px dashed var(--sand);border-radius:14px}
 /* ---- creative attribute analysis ---- */
-#creative{min-width:1360px}
+#creative{min-width:1040px}
 #creative td{vertical-align:top}
 /* frozen (sticky) green header inside a self-scrolling table */
-.freeze{max-height:78vh;overflow:auto}
+.freeze{max-height:80vh;overflow:auto}
 .freeze thead th{position:sticky;top:0;z-index:6;box-shadow:0 2px 0 rgba(0,0,0,.04)}
-.hookcell{max-width:210px;font-size:12.5px;color:var(--ink);font-style:italic}
+#creative tr:nth-child(even) td{background:transparent}
+#creative tr.crow td{border-top:2px solid var(--line);padding-bottom:6px}
+#creative tr.arow td.ana{border-top:none;padding:0 16px 15px 16px;font-size:13px;line-height:1.6;color:var(--ink2);text-align:left;background:#FBFAF4}
+#creative tr.arow td.ana b{color:var(--terra-d)}
+.hookcell{max-width:240px;font-size:12.5px;color:var(--ink);font-style:italic}
 .anglecell{font-size:11px;font-weight:700;white-space:nowrap}
 .acard{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:#EFE6D4;color:#7A5A38}
 .a-humor{background:#F6E3D2;color:#A24E2E}.a-promo{background:#FBEFC9;color:#8A6A1C}.a-story{background:#E5ECD6;color:#5C6A38}
@@ -186,7 +190,7 @@ footer b{color:var(--terra-d)}
   <div class="tablewrap freeze"><table id="creative"><thead><tr>
     <th class="l">Content &amp; Link</th><th class="l">Format</th><th class="l">Hook</th><th class="l">Angle</th>
     <th>Views</th><th>Reach</th><th>Likes</th><th>Cmts</th><th>Saves</th><th>Shares</th><th>ER%</th>
-    <th class="l">Verdict</th><th class="l">Analysis — why it worked / didn't</th>
+    <th class="l">Verdict</th>
   </tr></thead><tbody></tbody></table></div>
 
   <h2 class="sec" id="detailHead">Full Detail — Posts In Period</h2>
@@ -485,15 +489,16 @@ function render(start,end){
   ctb.innerHTML = n===0 ? `<tr><td class="l" colspan="13" style="padding:22px;text-align:center;color:var(--ink2)">No posts in this period.</td></tr>` :
    byDate.map(p=>{
      const ang=angleOf(p), ver=verdictOf(p,cur.avgViews), name=p.url.split('/').filter(Boolean).pop();
-     return `<tr>
+     const ana=p.caption?analysisOf(p,cur.avgViews,ang):('Metrics-only read: '+(p.views>=cur.avgViews?'above-average reach for the period.':'below-average reach; likely a soft hook.'));
+     return `<tr class="crow">
        <td class="l"><a class="link" href="${p.url}" target="_blank">${name} ↗</a></td>
        <td class="l">${badge(p.type)}</td>
        <td class="hookcell">${p.caption?('“'+hookOf(p)+'”'):'<span style="color:var(--ink2)">caption n/a</span>'}</td>
        <td class="anglecell"><span class="acard ${ang[1]}">${ang[0]}</span></td>
        <td>${fmt(p.views)}</td><td>${fmt(p.reach)}</td><td>${p.likes}</td><td>${p.comments}</td><td>${p.saves}</td><td>${p.shares}</td><td>${p.er.toFixed(1)}</td>
        <td class="l"><span class="verd ${ver[1]}">${ver[0]}</span></td>
-       <td class="anacell">${p.caption?analysisOf(p,cur.avgViews,ang):('Metrics-only read: '+(p.views>=cur.avgViews?'above-average reach for the period.':'below-average reach; likely a soft hook.'))}</td>
-     </tr>`;
+     </tr>
+     <tr class="arow"><td colspan="12" class="ana"><b>Why it ${p.views>=cur.avgViews?'worked':'underperformed'}:</b> ${ana}</td></tr>`;
    }).join('');
 }
 
