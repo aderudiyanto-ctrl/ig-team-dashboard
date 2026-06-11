@@ -172,7 +172,8 @@ footer{max-width:1240px;margin:40px auto 0;padding:18px 30px 0}
 </div>
 
 <script>
-const MEDIA_META=["media_id","timestamp","media_type","media_product_type","media_caption","media_permalink"];
+const ACCOUNT="17841400371676002"; // @adeftryani only (a GoWork IG account shares this connector)
+const MEDIA_META=["media_id","account_id","timestamp","media_type","media_product_type","media_caption","media_permalink"];
 const MEDIA_METRICS=["media_id","media_views","media_reach","media_saved","media_shares","media_like_count","media_comments_count"];
 
 async function call(params, attempt){
@@ -254,11 +255,11 @@ async function load(){
     const [meta,metrics,follow,totalRow]=await Promise.all([
       call({fields:MEDIA_META,date_preset:pr}),
       call({fields:MEDIA_METRICS,date_preset:pr}),
-      call({fields:["date","follower_count_1d"],date_preset:"last_30dT"}),
-      call({fields:["date","followers_count"],date_preset:"last_2dT"})
+      call({fields:["date","account_id","follower_count_1d"],date_preset:"last_30dT"}),
+      call({fields:["date","account_id","followers_count"],date_preset:"last_2dT"})
     ]);
     const byId={};metrics.forEach(r=>{if(r&&r.media_id!=null)byId[r.media_id]=r;});
-    const all=meta.map(r=>Object.assign({},r,byId[r.media_id]||{})).filter(m=>m.media_id);
+    const all=meta.map(r=>Object.assign({},r,byId[r.media_id]||{})).filter(m=>m.media_id&&String(m.account_id)===ACCOUNT);
     const inRange=(m,a,b)=>{const d=(m.timestamp||'').slice(0,10);return d>=a&&d<=b;};
     const cur=all.filter(m=>inRange(m,W.cs,W.ce));
     const prev=all.filter(m=>inRange(m,W.ps,W.pe));
@@ -282,8 +283,8 @@ function render(cur,prev,follow,totalRow,W){
   const caro=cur.filter(m=>tlabel(m)==='Carousel').length;
   const single=cur.filter(m=>tlabel(m)==='Single Post').length;
   // followers
-  let curTotal=0;(totalRow||[]).forEach(r=>{if(r.followers_count!=null)curTotal=+r.followers_count;});
-  const fIn=(follow||[]).filter(r=>{const d=(r.date||'').slice(0,10);return d>=W.cs&&d<=W.ce&&r.follower_count_1d!=null;});
+  let curTotal=0;(totalRow||[]).forEach(r=>{if(r.followers_count!=null&&String(r.account_id)===ACCOUNT)curTotal=+r.followers_count;});
+  const fIn=(follow||[]).filter(r=>{const d=(r.date||'').slice(0,10);return d>=W.cs&&d<=W.ce&&r.follower_count_1d!=null&&String(r.account_id)===ACCOUNT;});
   const netGrowth=fIn.reduce((s,r)=>s+(+r.follower_count_1d||0),0);
 
   // ---- Account Overview ----
